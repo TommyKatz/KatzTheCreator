@@ -5,9 +5,7 @@ using Discord.WebSocket;
 
 namespace KatzTheCreator.Config
 {
-    public class CommandHandler
-    {
-
+    public class CommandHandler{
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
@@ -158,8 +156,7 @@ namespace KatzTheCreator.Config
             } 
         }
 
-        public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined)
-        {
+        public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
             // parses Emote so bot can use
             Emote welcomeEmote = Emote.Parse("<:bouncerkitty:1020394446988247110>");
             // gets server and channels to send message in
@@ -191,20 +188,16 @@ namespace KatzTheCreator.Config
             await welcomeChannel.SendMessageAsync(embed: embed);
         }
 
-        public async Task JoinLogging(SocketGuildUser userJoined)
-        {
+        public async Task JoinLogging(SocketGuildUser userJoined){
             var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
             IEmote joinEmote = Emote.Parse("<a:join:993953953832251542>");
             await loggingChannel.SendMessageAsync($"{joinEmote} {userJoined.Mention} has appeared.");
-         
         }
 
-        public async Task LeaveLogging(SocketGuild thisGuild, SocketUser userLeave)
-        {
+        public async Task LeaveLogging(SocketGuild thisGuild, SocketUser userLeave){
             var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
             IEmote leaveEmote = Emote.Parse("<a:leave:993953885339267173>");
             await loggingChannel.SendMessageAsync($"{leaveEmote} **{userLeave.Username}** has vanished.");
-
         }
     }
 }

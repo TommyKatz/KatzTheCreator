@@ -1,11 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
-using System.Linq;
 
-namespace KatzTheCreator.UserModules
-{
+namespace KatzTheCreator.UserModules{
     public class WhoIs : ModuleBase<SocketCommandContext> {
         [Command("whois")]
         public async Task WhoIsUser(SocketGuildUser userToBeIDed =  null){
@@ -13,8 +10,7 @@ namespace KatzTheCreator.UserModules
             var rUser = Context.User as SocketGuildUser;
             var waitTimeTwo = 2000;
 
-            if (userToBeIDed == null)
-            {
+            if (userToBeIDed == null){
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
                     .WithAuthor($"{rUser}")
@@ -48,9 +44,7 @@ namespace KatzTheCreator.UserModules
                 await ReplyAsync(embed: embed);
 
                 await Context.Message.DeleteAsync();
-
             }
-
         }
     }
 }

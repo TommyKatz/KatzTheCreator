@@ -2,8 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class MuteRole : ModuleBase<SocketCommandContext>{
 
         [Command("mute")]

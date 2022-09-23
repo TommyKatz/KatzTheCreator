@@ -1,34 +1,27 @@
 ﻿using Discord.Commands;
 using Discord;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KatzTheCreator.UserModules
-{
-    public class ServerInfo : ModuleBase<SocketCommandContext>
-    {
+namespace KatzTheCreator.UserModules{
+    public class ServerInfo : ModuleBase<SocketCommandContext>{
         [Command("serverinfo")]
-        public async Task PingAsync()
-        {
-
+        public async Task PingAsync(){
 
             EmbedBuilder builder = new EmbedBuilder();
 
-            builder.WithTitle($"Server: {Context.Guild.Name}")
-                .WithColor(Color.Magenta)
+            builder.WithTitle($"{Context.Guild.Name}")
+                .WithColor(Color.DarkPurple)
                 .WithThumbnailUrl(Context.Guild.IconUrl)
-                .AddField("Owner", $"{Context.Guild.Owner}")
+                .AddField("Owner", $"{Context.Guild.Owner.Mention} *(ID: {Context.Guild.OwnerId})*")
                 .AddField("Date Created", $"{Context.Guild.CreatedAt.UtcDateTime.ToString("D")}")
-                .AddField("Members", $"{Context.Guild.MemberCount}")
-                .AddField("Roles", $"{Context.Guild.Roles.Count}")
-                .AddField("Text Channels", $"{Context.Guild.TextChannels.Count}")
-                .AddField("Voice Channels", $"{Context.Guild.VoiceChannels.Count}")
-                .WithFooter($"{DateTime.Now}");
+                .AddField("Member Count", $"{Context.Guild.MemberCount}")
+                .AddField("Server Booster Count", $"{Context.Guild.PremiumSubscriptionCount} boosts")
+                .AddField("Server Level", $"{Context.Guild.PremiumTier}, {14 - Context.Guild.PremiumSubscriptionCount} boosts away from Tier3 !")
+                .AddField("Role Count", $"{Context.Guild.Roles.Count}")
+                .WithFooter($"For more information, contact {Context.Guild.Owner}")
+                .WithCurrentTimestamp();
 
             await ReplyAsync("", false, builder.Build());
+            await Context.Message.DeleteAsync();
         }
     }
 }

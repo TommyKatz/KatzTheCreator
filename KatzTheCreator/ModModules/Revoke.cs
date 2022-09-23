@@ -5,7 +5,6 @@ using Discord.WebSocket;
 namespace KatzTheCreator.ModModules{
     public class Revoke : ModuleBase<SocketCommandContext>{
         [Command("revoke")]
-        [RequireBotPermission(GuildPermission.KickMembers)]
         public async Task RevokeUserAccess(SocketGuildUser userToBeRevoked = null, [Remainder] string revokeReason = null){
 
             var rUser = Context.User as SocketGuildUser;

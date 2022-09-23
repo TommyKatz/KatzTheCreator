@@ -4,8 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace KatzTheCreator.Config
-{
+namespace KatzTheCreator.Config{
     public class Program{
         static void Main(string[] args) => new Program().RunBotAsync().GetAwaiter().GetResult();
 

@@ -2,8 +2,7 @@
 using Discord.WebSocket;
 using Discord;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class GiveRole : ModuleBase<SocketCommandContext>{
         [Command("giverole")]
         public async Task AddRole(SocketGuildUser userToBeGivenRole = null, [Remainder] IRole roleToBeGiven = null){

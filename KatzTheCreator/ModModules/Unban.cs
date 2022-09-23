@@ -2,11 +2,9 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class Unban : ModuleBase<SocketCommandContext>{
         [Command("unban")]
-        [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task UnbanUser(ulong userToBeUnbanned = default, [Remainder] string unbanReason = null){
 
             var rUser = Context.User as SocketGuildUser;
@@ -66,6 +64,7 @@ namespace KatzTheCreator.ModModules
                     Embed embedTwo = builderTwo.Build();
                     await loggingChannel.SendMessageAsync(embed: embedTwo);
                 }
+
             } else{
 
                 var embedBuilder = new EmbedBuilder()

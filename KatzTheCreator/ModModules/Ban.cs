@@ -5,7 +5,6 @@ using Discord.WebSocket;
 namespace KatzTheCreator.ModModules{
     public class Ban : ModuleBase<SocketCommandContext>{
         [Command("ban")]
-        [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task BanUserMention(ulong userToBeBanned = default, [Remainder] string banReason = null){
             var rUser = Context.User as SocketGuildUser;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);

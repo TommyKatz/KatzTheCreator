@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
+﻿using System.Diagnostics;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class Ping : ModuleBase<SocketCommandContext>{
         [Command("ping")]
         [Alias("latency")]
         [Summary("Shows the websocket connection's latency and time it takes for me send a message.")]
-        public async Task PingAsync()
-        {
+        public async Task PingAsync(){
             var rUser = Context.User as SocketGuildUser;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
 
