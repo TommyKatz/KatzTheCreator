@@ -12,6 +12,7 @@ namespace KatzTheCreator.ModModules{
             var serverIconUrl = Context.Guild.IconUrl;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
             var modRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965726434624688188);
+            var repRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 1009266690204385322);
             var mutedRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
             var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel;
             var waitTimeSeven = 7000;
@@ -57,8 +58,13 @@ namespace KatzTheCreator.ModModules{
                         return;
                     } else {
                         await Context.Message.DeleteAsync();
+
+                            if (userToBeMuted.Roles.Contains(repRole)){
+                                await userToBeMuted.RemoveRoleAsync(repRole);
+                            }
+
                             try{
-                            await userToBeMuted.SendMessageAsync($"You have been muted in **Bugs By Daylight** for **{muteReason}**.\n~\n Issued by Staff Member: {rUser.Mention}\n~\n*Please note: All mutes from this server are indefinite.*\n*Any mute reversals are at the discretion of the issuer or the server directors.*");
+                                await userToBeMuted.SendMessageAsync($"You have been muted in **Bugs By Daylight** for **{muteReason}**.\n~\n Issued by Staff Member: {rUser.Mention}\n~\n*Please note: All mutes from this server are indefinite.*\n*Any mute reversals are at the discretion of the issuer or the server directors.*");
                             } catch{
                             var amountBuilder = new EmbedBuilder()
                                 .WithColor(Color.DarkPurple)
