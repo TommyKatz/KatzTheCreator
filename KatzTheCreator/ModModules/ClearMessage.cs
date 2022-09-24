@@ -11,11 +11,10 @@ namespace KatzTheCreator.ModModules{
 
             var rUser = Context.User as SocketGuildUser;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
-            var modRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Mod");
             var waitTimeFive = 5000;
             var waitTimeTwo = 2000;
 
-            if (rUser.Roles.Contains(directorRole) || rUser.Roles.Contains(modRole)){
+            if (rUser.Roles.Contains(directorRole)){
 
                 if (amount <= 0 || amount == default){
                     var embedBuilder = new EmbedBuilder()
