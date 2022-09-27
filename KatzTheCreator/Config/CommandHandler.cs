@@ -25,15 +25,17 @@ namespace KatzTheCreator.Config
             _client.UserLeft += LeaveLogging;
         }
 
+        public async Task RegisterCommandAsync(){
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        }
+
         public async Task RegisterButtonHandler(SocketMessageComponent component){
 
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
-            ulong tbaRole = 1022340900564774973;
             var getSCGRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
-            var waitTimeFive = 5000;
 
             switch (component.Data.CustomId){
 
@@ -76,10 +78,6 @@ namespace KatzTheCreator.Config
                     }
                     break;
             }
-        }
-
-        public async Task RegisterCommandAsync(){
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage arg){
