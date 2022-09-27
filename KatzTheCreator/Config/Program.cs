@@ -34,6 +34,7 @@ namespace KatzTheCreator.Config{
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
                 .AddSingleton<CommandHandler>()
+                .AddSingleton<UpdateHandler>()
                 .BuildServiceProvider();
 
             _client.Log += _client_Log;
@@ -44,6 +45,7 @@ namespace KatzTheCreator.Config{
             await _client.StartAsync();
 
             await _services.GetRequiredService<CommandHandler>().RegisterCommandAsync();
+            await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
 
             await _client.SetGameAsync("with your heart");
 
