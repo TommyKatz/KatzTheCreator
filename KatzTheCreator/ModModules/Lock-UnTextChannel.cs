@@ -47,7 +47,7 @@ namespace KatzTheCreator.ModModules{
             var channelToUnlock = Context.Channel as IGuildChannel;
             var unlockEmoji = new Emoji("🔓");
             var waitTimeSeven = 7000;
-            var newOverwrites = new OverwritePermissions(sendMessages: PermValue.Allow);
+            var newOverwrites = new OverwritePermissions(sendMessages: PermValue.Inherit);
 
             if (rUser.Roles.Contains(directorRole)){
 
