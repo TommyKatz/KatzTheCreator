@@ -32,7 +32,7 @@ namespace KatzTheCreator.Config
 
             int argPos = 0;
 
-            if (message.HasStringPrefix("t?", ref argPos)){
+            if (message.HasStringPrefix("?", ref argPos)){
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
                 var waitTimeSeven = 7000;
                 var rUser = message.Author.Mention;
