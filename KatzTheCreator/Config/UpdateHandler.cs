@@ -17,7 +17,7 @@ namespace KatzTheCreator.Config{
             _client = client;
             _services = services;
 
-            _client.MessageReceived += AddReactionsAsync;
+            _client.MessageReceived += MessageOpsAsync;
             _client.ButtonExecuted += RegisterButtonHandler;
             _client.UserJoined += AnnounceJoinedUser;
             _client.UserJoined += JoinLogging;
@@ -79,14 +79,14 @@ namespace KatzTheCreator.Config{
             }
         }
 
-        public async Task AddReactionsAsync(SocketMessage msg){
+        public async Task MessageOpsAsync(SocketMessage msg){
+            if (msg.Author.IsBot) return;
 
             Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
-
             Random rnd = new Random();
-            int number = rnd.Next(1, 11);
+            int number = rnd.Next(1, 101);
 
-            if (number == 9){
+            if (number <= 4){ // 4% chance
                 await msg.AddReactionAsync(hmmEmote);
             }
         }
