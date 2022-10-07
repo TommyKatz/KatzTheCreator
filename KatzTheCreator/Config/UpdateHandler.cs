@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using Discord;
 using Discord.Commands;
+using Microsoft.VisualBasic;
 
 namespace KatzTheCreator.Config{
     public class UpdateHandler{
