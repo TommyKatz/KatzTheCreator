@@ -16,6 +16,7 @@ namespace KatzTheCreator.Config{
             _client = client;
             _services = services;
 
+            _client.MessageReceived += MessageOpsAsync;
             _client.ButtonExecuted += RegisterButtonHandler;
             _client.UserJoined += AnnounceJoinedUser;
             _client.UserJoined += JoinLogging;
@@ -74,6 +75,18 @@ namespace KatzTheCreator.Config{
                         await component.RespondAsync(embed: embed, ephemeral: true);
                     }
                     break;
+            }
+        }
+
+        public async Task AddReactionsAsync(SocketMessage msg){
+
+            Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
+
+            Random rnd = new Random();
+            int number = rnd.Next(1, 11);
+
+            if (number == 9){
+                await msg.AddReactionAsync(hmmEmote);
             }
         }
 
