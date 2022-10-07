@@ -78,14 +78,14 @@ namespace KatzTheCreator.Config{
             }
         }
 
-        public async Task AddReactionsAsync(SocketMessage msg){
+        public async Task MessageOpsAsync(SocketMessage msg){
+            if (msg.Author.IsBot) return;
 
             Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
-
             Random rnd = new Random();
-            int number = rnd.Next(1, 11);
+            int number = rnd.Next(1, 101);
 
-            if (number == 9){
+            if (number <= 4){ // 4% chance
                 await msg.AddReactionAsync(hmmEmote);
             }
         }
