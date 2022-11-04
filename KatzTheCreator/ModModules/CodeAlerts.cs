@@ -37,16 +37,181 @@ namespace KatzTheCreator.ModModules
                 } else {
                     string[] subs = content.Split(", ");
                     var adjustedSubs = from sub in subs select sub.Replace($"{sub}", $"\" **{sub}** \"");
-                    var messages = await announceChannel.GetMessagesAsync(1).FlattenAsync();
-                    var latestCommand = Context.Message.Timestamp.DateTime;
-                    var latestMessage = messages.Last().Timestamp.DateTime;
-                    if ((latestCommand - latestMessage).TotalMinutes >= 30){
-                        if (!allowedChars.Contains(type)){
-                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+
+                    try{
+                        var messages = await announceChannel.GetMessagesAsync(1).FlattenAsync();
+                        var latestCommand = Context.Message.Timestamp.DateTime;
+                        var latestMessage = messages.Last().Timestamp.DateTime;
+
+                        if ((latestCommand - latestMessage).TotalMinutes >= 30)
+                        {
+                            if (!allowedChars.Contains(type))
+                            {
+                                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                                "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
+                                return;
+                            }
+                            else if (type.Equals('B'))
+                            {
+                                await announceChannel.SendMessageAsync("<@&1036799014508703794>");
+
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkRed)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/vEP5SNh.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Bloodpoints !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+
+                            }
+                            else if (type.Equals('S'))
+                            {
+                                await announceChannel.SendMessageAsync("<@&1036799014508703794>");
+
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkPurple)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/413V5Ze.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Iridescent Shards !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+
+                            }
+                            else if (type.Equals('F'))
+                            {
+                                await announceChannel.SendMessageAsync("<@&1036799014508703794>");
+
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkBlue)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/dBMrFhP.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Rift Fragments !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+                            }
+                            else if (type.Equals('C'))
+                            {
+                                await announceChannel.SendMessageAsync("<@&1036799014508703794>");
+
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.Teal)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/Fa5jJJm.png")
+                                    .WithTitle($"Enter code(s) below to receive newly added Charm(s) !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+                            }
+                        }
+                        else
+                        {
+
+                            if (!allowedChars.Contains(type))
+                            {
+                                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                                "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
+
+                            }
+                            else if (type.Equals('B'))
+                            {
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkRed)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/vEP5SNh.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Bloodpoints !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+
+                            }
+                            else if (type.Equals('S'))
+                            {
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkPurple)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/413V5Ze.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Iridescent Shards !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+
+                            }
+                            else if (type.Equals('F'))
+                            {
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.DarkBlue)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/dBMrFhP.png")
+                                    .WithTitle($"Enter code(s) below to receive {amount} Rift Fragments !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+                            }
+                            else if (type.Equals('C'))
+                            {
+                                var builder = new EmbedBuilder()
+                                    .WithColor(Color.Teal)
+                                    .WithCurrentTimestamp()
+                                    .WithThumbnailUrl("https://i.imgur.com/Fa5jJJm.png")
+                                    .WithTitle($"Enter code(s) below to receive newly added Charm(s) !")
+                                    .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
+                                    .WithFooter(footer => {
+                                        footer
+                                        .WithText($"Published by {rUser}")
+                                        .WithIconUrl(rUser.GetAvatarUrl());
+                                    });
+                                Embed embed = builder.Build();
+                                await announceChannel.SendMessageAsync(embed: embed);
+                            }
+                        }
+                    }
+                    catch (Exception){
+                        if (!allowedChars.Contains(type))
+                        {
+                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                             "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
                             return;
                         }
-                        else if (type.Equals('B')){
+                        else if (type.Equals('B'))
+                        {
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -55,7 +220,7 @@ namespace KatzTheCreator.ModModules
                                 .WithThumbnailUrl("https://i.imgur.com/vEP5SNh.png")
                                 .WithTitle($"Enter code(s) below to receive {amount} Bloodpoints !")
                                 .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
+                                .WithFooter(footer => {
                                     footer
                                     .WithText($"Published by {rUser}")
                                     .WithIconUrl(rUser.GetAvatarUrl());
@@ -63,7 +228,9 @@ namespace KatzTheCreator.ModModules
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
 
-                        }else if (type.Equals('S')){
+                        }
+                        else if (type.Equals('S'))
+                        {
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -72,7 +239,7 @@ namespace KatzTheCreator.ModModules
                                 .WithThumbnailUrl("https://i.imgur.com/413V5Ze.png")
                                 .WithTitle($"Enter code(s) below to receive {amount} Iridescent Shards !")
                                 .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
+                                .WithFooter(footer => {
                                     footer
                                     .WithText($"Published by {rUser}")
                                     .WithIconUrl(rUser.GetAvatarUrl());
@@ -80,7 +247,9 @@ namespace KatzTheCreator.ModModules
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
 
-                        }else if (type.Equals('F')){
+                        }
+                        else if (type.Equals('F'))
+                        {
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -88,22 +257,6 @@ namespace KatzTheCreator.ModModules
                                 .WithCurrentTimestamp()
                                 .WithThumbnailUrl("https://i.imgur.com/dBMrFhP.png")
                                 .WithTitle($"Enter code(s) below to receive {amount} Rift Fragments !")
-                                .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
-                                    footer
-                                    .WithText($"Published by {rUser}")
-                                    .WithIconUrl(rUser.GetAvatarUrl());
-                                });
-                            Embed embed = builder.Build();
-                            await announceChannel.SendMessageAsync(embed: embed);
-                        }else if (type.Equals('C')){
-                            await announceChannel.SendMessageAsync("<@&1036799014508703794>");
-
-                            var builder = new EmbedBuilder()
-                                .WithColor(Color.Teal)
-                                .WithCurrentTimestamp()
-                                .WithThumbnailUrl("https://i.imgur.com/Fa5jJJm.png")
-                                .WithTitle($"Enter code(s) below to receive newly added Charm(s) !")
                                 .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
                                 .WithFooter(footer => {
                                     footer
@@ -113,58 +266,10 @@ namespace KatzTheCreator.ModModules
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
                         }
-                    }else{
+                        else if (type.Equals('C'))
+                        {
+                            await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
-                        if (!allowedChars.Contains(type)){
-                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
-                            "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
-
-                        }
-                        else if (type.Equals('B')){
-                            var builder = new EmbedBuilder()
-                                .WithColor(Color.DarkRed)
-                                .WithCurrentTimestamp()
-                                .WithThumbnailUrl("https://i.imgur.com/vEP5SNh.png")
-                                .WithTitle($"Enter code(s) below to receive {amount} Bloodpoints !")
-                                .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
-                                    footer
-                                    .WithText($"Published by {rUser}")
-                                    .WithIconUrl(rUser.GetAvatarUrl());
-                                });
-                            Embed embed = builder.Build();
-                            await announceChannel.SendMessageAsync(embed: embed);
-
-                        }else if (type.Equals('S')){
-                            var builder = new EmbedBuilder()
-                                .WithColor(Color.DarkPurple)
-                                .WithCurrentTimestamp()
-                                .WithThumbnailUrl("https://i.imgur.com/413V5Ze.png")
-                                .WithTitle($"Enter code(s) below to receive {amount} Iridescent Shards !")
-                                .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
-                                    footer
-                                    .WithText($"Published by {rUser}")
-                                    .WithIconUrl(rUser.GetAvatarUrl());
-                                });
-                            Embed embed = builder.Build();
-                            await announceChannel.SendMessageAsync(embed: embed);
-
-                        }else if (type.Equals('F')){
-                            var builder = new EmbedBuilder()
-                                .WithColor(Color.DarkBlue)
-                                .WithCurrentTimestamp()
-                                .WithThumbnailUrl("https://i.imgur.com/dBMrFhP.png")
-                                .WithTitle($"Enter code(s) below to receive {amount} Rift Fragments !")
-                                .WithDescription($"{string.Join("\n\n", adjustedSubs)}")
-                                .WithFooter(footer =>{
-                                    footer
-                                    .WithText($"Published by {rUser}")
-                                    .WithIconUrl(rUser.GetAvatarUrl());
-                                });
-                            Embed embed = builder.Build();
-                            await announceChannel.SendMessageAsync(embed: embed);
-                        }else if (type.Equals('C')){
                             var builder = new EmbedBuilder()
                                 .WithColor(Color.Teal)
                                 .WithCurrentTimestamp()

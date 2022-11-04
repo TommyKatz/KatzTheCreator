@@ -9,8 +9,9 @@ namespace KatzTheCreator.ModModules{
         public async Task AddRole(SocketGuildUser userToBeGivenRole = null, [Remainder] IRole roleToBeGiven = null){
             var rUser = Context.User as SocketGuildUser;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
+            var neaRolePos = Context.Guild.Roles.FirstOrDefault(x => x.Id == 1018285950792642582).Position;
             var Role = Context.Guild.Roles.FirstOrDefault(x => x.Name.ToString() == $"{roleToBeGiven}");
-            var waitTimeSeven = 7000;
+            
 
             if (rUser.Roles.Contains(directorRole)){
 
@@ -31,7 +32,7 @@ namespace KatzTheCreator.ModModules{
                     var moderatorHierarchyPos = rUser.Hierarchy;
                     var roleHierachyPos = Role.Position;
 
-                    if (moderatorHierarchyPos > roleHierachyPos){ 
+                    if (moderatorHierarchyPos > roleHierachyPos && neaRolePos > roleHierachyPos){ 
 
                         if (userToBeGivenRole.Roles.Contains(Role)){
                             await Context.Message.DeleteAsync();

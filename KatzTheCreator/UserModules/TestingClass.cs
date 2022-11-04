@@ -1,5 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
+using KatzTheCreator.ModModules;
 using System.Reactive.Linq;
 
 namespace KatzTheCreator.UserModules{
@@ -18,8 +20,7 @@ namespace KatzTheCreator.UserModules{
         [Command("test2")]
         public async Task TestingMethod()
         {
-            var persuasion = "believe in god yourself";
-            Console.WriteLine($"{persuasion}");
+            await ReplyAsync("wow, you have permission !");
         }
     }
 }
