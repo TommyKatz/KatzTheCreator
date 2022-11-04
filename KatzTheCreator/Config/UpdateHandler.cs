@@ -187,54 +187,61 @@ namespace KatzTheCreator.Config
                 await msg.AddReactionAsync(hmmEmote);
             }
 
-            var socketMessage = msg as SocketUserMessage;
-            var userSpamming = socketMessage.Author as SocketGuildUser;
-            var messages = await msg.Channel.GetMessagesAsync(5).FlattenAsync();
+            // under construction 
+            // flags a channel with no messages as spam
+            /*try{
+                var socketMessage = msg as SocketUserMessage;
+                var userSpamming = socketMessage.Author as SocketGuildUser;
+                var messages = await msg.Channel.GetMessagesAsync(5).FlattenAsync();
 
-            //bool messagesComparedMatch = messages.All(x => x.Content == socketMessage.Content); // Compares messages to see if they match
-            bool messageAuthorsMatch = messages.All(a => a.Author == socketMessage.Author);
-            var newSpamTime = socketMessage.Timestamp.DateTime;
-            var oldSpamTime = messages.Last().Timestamp.DateTime;
-            var bugsServer = _client.GetGuild(960957925143224340);
-            var mutedRole = bugsServer.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
-            var rcsLogChannel = _client.GetChannel(1027256422095925338) as SocketTextChannel;
-            var timeResult = (newSpamTime - oldSpamTime).TotalSeconds;
+                //bool messagesComparedMatch = messages.All(x => x.Content == socketMessage.Content); // Compares messages to see if they match
+                bool messageAuthorsMatch = messages.All(a => a.Author == socketMessage.Author);
+                var newSpamTime = socketMessage.Timestamp.DateTime;
+                var oldSpamTime = messages.Last().Timestamp.DateTime;
+                var bugsServer = _client.GetGuild(960957925143224340);
+                var mutedRole = bugsServer.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
+                var rcsLogChannel = _client.GetChannel(1027256422095925338) as SocketTextChannel;
+                var timeResult = (newSpamTime - oldSpamTime).TotalSeconds;
 
-            if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch)
-            {
-                await userSpamming.AddRoleAsync(mutedRole);
-                await ((ITextChannel)socketMessage.Channel).DeleteMessagesAsync(messages);
+                if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch && messages.All(5))
+                {
+                    await userSpamming.AddRoleAsync(mutedRole);
+                    await ((ITextChannel)socketMessage.Channel).DeleteMessagesAsync(messages);
 
-                var embedBuilder = new EmbedBuilder()
-                    .WithTitle("RCS ALERT: Spam Detection")
-                    .WithColor(Color.DarkRed)
-                    .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n\nThis account has been flagged by our Raid Control Systems,\nan indefinite mute has been applied while your conduct's investigated.")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer =>
-                    {
-                        footer
-                        .WithText($"Muted by RCS");
-                    });
+                    var embedBuilder = new EmbedBuilder()
+                        .WithTitle("RCS ALERT: Spam Detection")
+                        .WithColor(Color.DarkRed)
+                        .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n\nThis account has been flagged by our Raid Control Systems,\nan indefinite mute has been applied while your conduct's investigated.")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer =>
+                        {
+                            footer
+                            .WithText($"Muted by RCS");
+                        });
 
-                Embed embed = embedBuilder.Build();
-                await socketMessage.Channel.SendMessageAsync(embed: embed);
+                    Embed embed = embedBuilder.Build();
+                    await socketMessage.Channel.SendMessageAsync(embed: embed);
 
-                var embedBuilderTwo = new EmbedBuilder()
-                    .WithTitle("Spam Detection Flag")
-                    .WithColor(Color.DarkRed)
-                    .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n***Time Span:*** {timeResult} second(s)\n***Content Sent:***\n {string.Join(",\n\n", messages)}")
-                    .WithCurrentTimestamp();
+                    var embedBuilderTwo = new EmbedBuilder()
+                        .WithTitle("Spam Detection Flag")
+                        .WithColor(Color.DarkRed)
+                        .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n***Time Span:*** {timeResult} second(s)\n***Content Sent:***\n {string.Join(",\n\n", messages)}")
+                        .WithCurrentTimestamp();
 
-                Embed embedTwo = embedBuilderTwo.Build();
-                await rcsLogChannel.SendMessageAsync(embed: embedTwo);
+                    Embed embedTwo = embedBuilderTwo.Build();
+                    await rcsLogChannel.SendMessageAsync(embed: embedTwo);
 
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("ALERT: Spam Detected");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"Suspected User: {socketMessage.Author} Spam Time: {timeResult}");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("ALERT: Spam Detected");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine($"Suspected User: {socketMessage.Author} Spam Time: {timeResult}");
 
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+            } catch (Exception){
+                //ignore
+            }*/
+            
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
