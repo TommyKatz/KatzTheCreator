@@ -7,8 +7,8 @@ namespace KatzTheCreator.ModModules{
 
         [Command("unmute")]
         public async Task RemoveMuteRoleOfUser(SocketGuildUser userToBeUnmuted = null, [Remainder] string unmuteReason = null){
-
             var rUser = Context.User as SocketGuildUser;
+            var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
             var serverName = Context.Guild.Name;
             var serverIconUrl = Context.Guild.IconUrl;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
@@ -20,14 +20,9 @@ namespace KatzTheCreator.ModModules{
             if (rUser.Roles.Contains(directorRole) || rUser.Roles.Contains(modRole)){
 
                 if (userToBeUnmuted == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailUser = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailUser.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
                     return;
                 }
 
@@ -35,37 +30,23 @@ namespace KatzTheCreator.ModModules{
                 var moderatorHierachyPos = rUser.Hierarchy;
 
                 if (string.IsNullOrWhiteSpace(unmuteReason)){
-                        var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{rUser.Mention}, you didn't state a reason; A reason must be provided to use this.");
-                        Embed embed = embedBuilder.Build();
-                        var botReplyFailReason = await ReplyAsync(embed: embed);
-                        await Context.Message.DeleteAsync();
-                        await Task.Delay(waitTimeSeven);
-                        await botReplyFailReason.DeleteAsync();
-                        return;
+                    await Context.Message.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't state a reason; A reason must be provided to use this.");
+                    return;
                 } else if (!userToBeUnmuted.Roles.Contains(mutedRole)){
-                        var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{rUser.Mention}, user **{userToBeUnmuted.Username}** is not muted.");
-                        Embed embed = embedBuilder.Build();
-                        var botReplyFailReason = await ReplyAsync(embed: embed);
-                        await Context.Message.DeleteAsync();
-                        await Task.Delay(waitTimeSeven);
-                        await botReplyFailReason.DeleteAsync();
-                        return;
+                    await Context.Message.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    $"***Uh oh! Something went wrong...***\n\nUser **{userToBeUnmuted.Username}** is not muted.");
+                    return;
                 } else {
                     await Context.Message.DeleteAsync();
 
                         try{
-                        await userToBeUnmuted.SendMessageAsync($"You have been unmuted in **Bugs By Daylight** for **{unmuteReason}**.\n~\n Withdrawn by Staff Member: {rUser.Mention}\n~\n*You may now type and rejoin voice channels again.*");
-
+                            await userToBeUnmuted.SendMessageAsync($"You have been unmuted in **Bugs By Daylight** for **{unmuteReason}**.\n~\n Withdrawn by {rUserHighestRole}: {rUser.Mention}\n~\n*You may now type and rejoin voice channels again.*");
                         } catch {
-                        var amountBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{rUser.Mention}, this user's DMs are disabled; A message could not be sent to the muted user.");
-                        Embed tryEmbed = amountBuilder.Build();
-                        var botReplyFailPerms = await ReplyAsync(embed: tryEmbed);
+                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                            $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the muted user.");
                         }
 
                     await userToBeUnmuted.RemoveRoleAsync(mutedRole);
@@ -77,9 +58,9 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeUnmuted.Mention} **has been unmuted in\n {serverName}.**\n\n **Reason:** {unmuteReason}.")
                         .WithFooter(footer => {
                             footer
-                            .WithText($"Unmuted by Server Staff | {rUser}")
+                            .WithText($"Unmuted by {rUserHighestRole} | {rUser}")
                             .WithIconUrl(rUser.GetAvatarUrl());
-                            });
+                        });
                     Embed embed = builder.Build();
                     await ReplyAsync(embed: embed);
 
@@ -95,14 +76,9 @@ namespace KatzTheCreator.ModModules{
                 }
 
             } else {
-                var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = amountBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }

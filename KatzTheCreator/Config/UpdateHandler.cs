@@ -4,9 +4,10 @@ using Discord;
 using Discord.Commands;
 using Microsoft.VisualBasic;
 
-namespace KatzTheCreator.Config{
+namespace KatzTheCreator.Config
+{
     public class UpdateHandler{
-
+        
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
@@ -19,6 +20,8 @@ namespace KatzTheCreator.Config{
 
             _client.MessageReceived += MessageOpsAsync;
             _client.ButtonExecuted += RegisterButtonHandler;
+            _client.UserBanned += UserBannedLog;
+            _client.UserUnbanned += UserUnbannedLog;
             _client.UserJoined += AnnounceJoinedUser;
             _client.UserJoined += JoinLogging;
             _client.UserLeft += LeaveLogging;
@@ -28,13 +31,88 @@ namespace KatzTheCreator.Config{
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
+        public async Task UserBannedLog(IUser userBanned, IGuild currentGuild){
+
+            var banAuthor = (await currentGuild.GetAuditLogsAsync(actionType: ActionType.Ban)).FirstOrDefault().User;
+            var banReason = (await currentGuild.GetBanAsync(userBanned)).Reason;
+            var loggingChannel = _client.GetChannel(965699174358216744) as SocketTextChannel;
+
+            if (!banAuthor.IsBot){
+
+                if (!string.IsNullOrEmpty(banReason)){
+                    try{
+                        var builderTwo = new EmbedBuilder()
+                            .WithColor(Color.DarkRed)
+                            .WithThumbnailUrl(userBanned.GetAvatarUrl())
+                            .WithAuthor($"{banAuthor} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
+                            .WithDescription($"**Banned:** {userBanned.Mention} *(ID: {userBanned.Id})*\n**Reason:** {banReason}")
+                            .WithCurrentTimestamp()
+                            .WithFooter(footer =>{
+                            footer
+                            .WithText("Right Click");
+                            });
+                        Embed embedTwo = builderTwo.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    } catch (Exception){
+                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    }
+
+                } else {
+                    try{
+                        var builderTwo = new EmbedBuilder()
+                            .WithColor(Color.DarkRed)
+                            .WithThumbnailUrl(userBanned.GetAvatarUrl())
+                            .WithAuthor($"{banAuthor} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
+                            .WithDescription($"**Banned:** {userBanned.Mention} *(ID: {userBanned.Id})*\n**Reason:** No Reason Provided")
+                            .WithCurrentTimestamp()
+                            .WithFooter(footer =>{
+                            footer
+                            .WithText("Right Click");
+                            });
+                        Embed embedTwo = builderTwo.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    } catch (Exception){
+                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    }
+                }
+            }
+        }
+
+        public async Task UserUnbannedLog(IUser userUnbanned, IGuild thisGuild){
+            var currentGuild = thisGuild as IGuild;
+            var unbanAuthor = (await currentGuild.GetAuditLogsAsync(actionType: ActionType.Unban)).FirstOrDefault().User;
+            var loggingChannel = _client.GetChannel(965699174358216744) as SocketTextChannel;
+
+            if (!unbanAuthor.IsBot){
+                try{
+                    var builderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithThumbnailUrl(userUnbanned.GetAvatarUrl())
+                    .WithAuthor($"{unbanAuthor} (ID: {unbanAuthor.Id})", unbanAuthor.GetAvatarUrl())
+                    .WithDescription($"**Unbanned:** {userUnbanned.Mention} *(ID: {userUnbanned.Id})*\n**Reason:** No Reason Provided")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer =>
+                    {
+                        footer
+                        .WithText("Right Click");
+                    });
+                    Embed embedTwo = builderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                } catch{
+                    await loggingChannel.SendMessageAsync($"{unbanAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                }
+            }
+        }
+
         public async Task RegisterButtonHandler(SocketMessageComponent component){
 
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
+            ulong alertsRoleID = 1036799014508703794;
             var getSCGRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
+            var getAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1036799014508703794);
 
             switch (component.Data.CustomId){
 
@@ -76,6 +154,25 @@ namespace KatzTheCreator.Config{
                         await component.RespondAsync(embed: embed, ephemeral: true);
                     }
                     break;
+
+                case "Code Alerts":
+
+                    if (!rUser.Roles.Contains(getAlertsRole)){
+                        await rUser.AddRoleAsync(alertsRoleID);
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, i assigned you the {getAlertsRole.Mention} role.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+                    } else {
+                        await rUser.RemoveRoleAsync(alertsRoleID);
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, i removed your {getAlertsRole.Mention} role.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+                    }
+                    break;
             }
         }
 
@@ -88,6 +185,55 @@ namespace KatzTheCreator.Config{
 
             if (number <= 4){ // 4% chance
                 await msg.AddReactionAsync(hmmEmote);
+            }
+
+            var socketMessage = msg as SocketUserMessage;
+            var userSpamming = socketMessage.Author as SocketGuildUser;
+            var messages = await msg.Channel.GetMessagesAsync(5).FlattenAsync();
+
+            //bool messagesComparedMatch = messages.All(x => x.Content == socketMessage.Content); // Compares messages to see if they match
+            bool messageAuthorsMatch = messages.All(a => a.Author == socketMessage.Author);
+            var newSpamTime = socketMessage.Timestamp.DateTime;
+            var oldSpamTime = messages.Last().Timestamp.DateTime;
+            var bugsServer = _client.GetGuild(960957925143224340);
+            var mutedRole = bugsServer.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
+            var rcsLogChannel = _client.GetChannel(1027256422095925338) as SocketTextChannel;
+            var timeResult = (newSpamTime - oldSpamTime).TotalSeconds;
+
+            if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch)
+            {
+                await userSpamming.AddRoleAsync(mutedRole);
+                await ((ITextChannel)socketMessage.Channel).DeleteMessagesAsync(messages);
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithTitle("RCS ALERT: Spam Detection")
+                    .WithColor(Color.DarkRed)
+                    .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n\nThis account has been flagged by our Raid Control Systems,\nan indefinite mute has been applied while your conduct's investigated.")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer =>
+                    {
+                        footer
+                        .WithText($"Muted by RCS");
+                    });
+
+                Embed embed = embedBuilder.Build();
+                await socketMessage.Channel.SendMessageAsync(embed: embed);
+
+                var embedBuilderTwo = new EmbedBuilder()
+                    .WithTitle("Spam Detection Flag")
+                    .WithColor(Color.DarkRed)
+                    .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n***Time Span:*** {timeResult} second(s)\n***Content Sent:***\n {string.Join(",\n\n", messages)}")
+                    .WithCurrentTimestamp();
+
+                Embed embedTwo = embedBuilderTwo.Build();
+                await rcsLogChannel.SendMessageAsync(embed: embedTwo);
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("ALERT: Spam Detected");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"Suspected User: {socketMessage.Author} Spam Time: {timeResult}");
+
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
         }
 

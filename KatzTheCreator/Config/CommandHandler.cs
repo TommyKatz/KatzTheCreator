@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using System.Threading.Channels;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using KatzTheCreator.UserModules;
 
 namespace KatzTheCreator.Config
 {
@@ -28,71 +30,43 @@ namespace KatzTheCreator.Config
             var message = arg as SocketUserMessage;
             var context = new SocketCommandContext(_client, message);
 
-            if (message.Author.IsBot) return;
-
+            if (message.Author.IsBot || message.Channel.GetChannelType() == ChannelType.DM) return;
+            
             int argPos = 0;
 
             if (message.HasStringPrefix("?", ref argPos)){
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
-                var waitTimeSeven = 7000;
-                var rUser = message.Author.Mention;
+                var rUser = message.Author;
 
                 if (!result.IsSuccess) Console.Write(result.ErrorReason);
 
                 if (result.Error.Equals(CommandError.UnmetPrecondition)){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser}, unable to perform this action; {result.ErrorReason}");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await message.Channel.SendMessageAsync(embed: embed);
                     await message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    $"***Uh oh! Something went wrong...***\n\nUnable to perform this action; {result.ErrorReason}");
                 }
                 
                 if (result.Error.Equals(CommandError.UnknownCommand)){
-
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser}, this is an invalid command; **Try again** or type ``?help`` to see the commands available");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await message.Channel.SendMessageAsync(embed: embed);
                     await message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    "***Uh oh! Something went wrong...***\n\nThis is an invalid command; **Try again** or type ``?help`` to see the commands available");
                 }
                 if (result.Error.Equals(CommandError.ObjectNotFound)){
-
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser}, unable to perform this action; {result.ErrorReason}");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await message.Channel.SendMessageAsync(embed: embed);
                     await message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    $"***Uh oh! Something went wrong...***\n\nUnable to perform this action; {result.ErrorReason}");
                 }
 
                 if (result.Error.Equals(CommandError.ParseFailed)){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser}, you used this command incorrectly; **Try again** or type ``?help`` to see the commands available, and how to use them.");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await message.Channel.SendMessageAsync(embed: embed);
                     await message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    "***Uh oh! Something went wrong...***\n\nYou used this command incorrectly; **Try again** or type ``?help`` to see the commands available, and how to use them.");
                 }
 
                 if (result.Error.Equals(CommandError.Exception)){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser}, unable to perform this action; {result.ErrorReason}");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await message.Channel.SendMessageAsync(embed: embed);
                     await message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    $"***Uh oh! Something went wrong...***\n\nUnable to perform this action; {result.ErrorReason}");
                 }
             } 
         }

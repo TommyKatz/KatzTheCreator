@@ -17,15 +17,10 @@ namespace KatzTheCreator.ModModules{
             if (rUser.Roles.Contains(directorRole)){
 
                 if (amount <= 0 || amount == default){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, Command unsuccessful; Ensure correct format.");
-                    Embed embed = embedBuilder.Build();
-                    var botReply = await ReplyAsync(embed: embed);
-                    await Task.Delay(waitTimeFive);
+
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeTwo);
-                    await botReply.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nCommand unsuccessful; Ensure correct format.");
                     return;
                 } else {
                     IEnumerable<IMessage> messages = await Context.Channel.GetMessagesAsync(amount + 1).FlattenAsync();
@@ -41,16 +36,9 @@ namespace KatzTheCreator.ModModules{
                 }
 
             } else {
-
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = embedBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
-                await Task.Delay(waitTimeFive);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeTwo);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }   
     }

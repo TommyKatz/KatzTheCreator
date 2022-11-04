@@ -28,14 +28,9 @@ namespace KatzTheCreator.ModModules{
                 var botReplySuccess = await ReplyAsync(embed: embed);
 
             } else {
-                var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = amountBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
 
@@ -61,14 +56,9 @@ namespace KatzTheCreator.ModModules{
                 var botReplySuccess = await ReplyAsync(embed: embed);
 
             } else {
-                var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = amountBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }

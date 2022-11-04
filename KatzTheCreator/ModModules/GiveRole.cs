@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using Discord;
+using System.Data;
 
 namespace KatzTheCreator.ModModules{
     public class GiveRole : ModuleBase<SocketCommandContext>{
@@ -14,44 +15,28 @@ namespace KatzTheCreator.ModModules{
             if (rUser.Roles.Contains(directorRole)){
 
                 if (userToBeGivenRole == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailUser = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailUser.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
                     return;
                 }
 
                 if (roleToBeGiven == null){
-                    var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{rUser.Mention}, you did not specify a role.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailUser = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailUser.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a role.");
                     return;
 
                 } else {
-                    var moderatorHierachyPos = rUser.Hierarchy;
+                    var moderatorHierarchyPos = rUser.Hierarchy;
                     var roleHierachyPos = Role.Position;
 
-                    if (moderatorHierachyPos > roleHierachyPos){ 
+                    if (moderatorHierarchyPos > roleHierachyPos){ 
 
                         if (userToBeGivenRole.Roles.Contains(Role)){
-
-                            var embedBuilder = new EmbedBuilder()
-                                .WithColor(Color.DarkPurple)
-                                .WithDescription($"{rUser.Mention}, user **{userToBeGivenRole.Username}** already possesses the {Role.Mention} role.");
-                            Embed embed = embedBuilder.Build();
-                            var botReplyFailUser = await ReplyAsync(embed: embed);
                             await Context.Message.DeleteAsync();
-                            await Task.Delay(waitTimeSeven);
-                            await botReplyFailUser.DeleteAsync();
+                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                            $"***Uh oh! Something went wrong...***\n\nUser **{userToBeGivenRole.Username}** already possesses the **{Role.Name}** role.");
                             return;
                         } else {
                             var embedBuilder = new EmbedBuilder()
@@ -63,26 +48,17 @@ namespace KatzTheCreator.ModModules{
                             await Context.Message.DeleteAsync();
                         }
                     } else {
-                        var amountBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you are not allowed to give this role; Action denied.");
-                        Embed embed = amountBuilder.Build();
-                        var botReplyFailPerms = await ReplyAsync(embed: embed);
                         await Context.Message.DeleteAsync();
-                        await Task.Delay(waitTimeSeven);
-                        await botReplyFailPerms.DeleteAsync();
+                        await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                        "***Uh oh! Something went wrong...***\n\nYou are not allowed to give this role; Action denied.");
+                        return;
                     }
                 }
 
             } else {
-                var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = amountBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }

@@ -8,34 +8,23 @@ namespace KatzTheCreator.ModModules{
         public async Task UnbanUser(ulong userToBeUnbanned = default, [Remainder] string unbanReason = null){
 
             var rUser = Context.User as SocketGuildUser;
+            var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
             var serverName = Context.Guild.Name;
             var serverIconUrl = Context.Guild.IconUrl;
             var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel; 
-            var waitTimeSeven = 7000;
 
             if (rUser.Roles.Contains(directorRole)){
 
                 if (userToBeUnbanned == default){
-                    // bots response
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailUser = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailUser.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
                     return;
                 } else if (string.IsNullOrWhiteSpace(unbanReason)){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't state a reason; A reason must be provided to use this.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't state a reason; A reason must be provided to use this.");
                     return;
                 } else {
                     // Sends ban message in current text channel
@@ -48,7 +37,7 @@ namespace KatzTheCreator.ModModules{
                     .WithDescription($"<@{userToBeUnbanned}> **has been unbanned from\n {serverName}.**\n\n **Reason:** {unbanReason}.")
                     .WithFooter(footer =>{
                         footer
-                        .WithText($"Unbanned by Staff Member | {rUser}")
+                        .WithText($"Unbanned by {rUserHighestRole} | {rUser}")
                         .WithIconUrl(rUser.GetAvatarUrl());
                     });
                     Embed embed = builder.Build();
@@ -66,15 +55,9 @@ namespace KatzTheCreator.ModModules{
                 }
 
             } else{
-
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = embedBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }
