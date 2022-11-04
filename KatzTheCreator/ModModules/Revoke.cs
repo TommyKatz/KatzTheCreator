@@ -8,6 +8,7 @@ namespace KatzTheCreator.ModModules{
         public async Task RevokeUserAccess(SocketGuildUser userToBeRevoked = null, [Remainder] string revokeReason = null){
 
             var rUser = Context.User as SocketGuildUser;
+            var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
             var serverName = Context.Guild.Name;
             var serverIconUrl = Context.Guild.IconUrl;
@@ -17,15 +18,10 @@ namespace KatzTheCreator.ModModules{
             if (rUser.Roles.Contains(directorRole)){
 
                 if (userToBeRevoked == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailUser = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailUser.DeleteAsync();
-                    return;
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
+                    return; ;
                 }
 
                 var userHierachyPos = userToBeRevoked.Hierarchy;
@@ -34,28 +30,19 @@ namespace KatzTheCreator.ModModules{
                 if (moderatorHierachyPos > userHierachyPos){
                     
                     if (string.IsNullOrWhiteSpace(revokeReason)){
-                        var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{rUser.Mention}, you didn't state a reason; A reason must be provided to use this.");
-                        Embed embed = embedBuilder.Build();
-                        var botReplyFailReason = await ReplyAsync(embed: embed);
                         await Context.Message.DeleteAsync();
-                        await Task.Delay(waitTimeSeven);
-                        await botReplyFailReason.DeleteAsync();
+                        await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                        "***Uh oh! Something went wrong...***\n\nYou didn't state a reason; A reason must be provided to use this.");
                         return;
                     } else {
                         await Context.Message.DeleteAsync();
 
-                            try{
-                                await userToBeRevoked.SendMessageAsync($"You been revoked access from **Bugs By Daylight** for **{revokeReason}**.\n~\n Issued by Staff Member: {rUser.Mention}\n~\n *You must be re-invited to join this server again.*");
-
-                            } catch (Exception messageNotDelivered){
-                            var amountBuilder = new EmbedBuilder()
-                                .WithColor(Color.DarkPurple)
-                                .WithDescription($"{rUser.Mention}, this user's DMs are disabled; A message could not be sent to the revoked user.");
-                            Embed tryEmbed = amountBuilder.Build();
-                            var botReplyFailPerms = await ReplyAsync(embed: tryEmbed);
-                            }
+                        try{
+                            await userToBeRevoked.SendMessageAsync($"You been revoked access from **Bugs By Daylight** for **{revokeReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *You must be re-invited to join this server again.*");
+                        } catch (Exception){
+                            await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                            $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the muted user.");
+                        }
 
                         await userToBeRevoked.KickAsync(revokeReason);
                         var builder = new EmbedBuilder()
@@ -65,7 +52,7 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
                         .WithFooter(footer =>{
                             footer
-                            .WithText($"Access Revoked by Staff Member | {rUser}")
+                            .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                         Embed embed = builder.Build();
@@ -84,26 +71,15 @@ namespace KatzTheCreator.ModModules{
                     }
 
                 }  else {
-                    var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, nice try, this user's hierarchy position is higher than yours.");
-                    Embed embed = amountBuilder.Build();
-                    var botReplyFailPerms = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailPerms.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nNice try, this user's hierarchy position is higher than yours.");
                 }  
 
             } else {
-
-                var amountBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, you do not have permission to use this.");
-                Embed embed = amountBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
 
             

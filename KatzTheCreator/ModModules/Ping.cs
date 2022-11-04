@@ -12,7 +12,6 @@ namespace KatzTheCreator.ModModules{
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
 
             if (rUser.Roles.Contains(directorRole)){
-
                 // start a new stopwatch to measure the time it takes for us to send a message
                 var sw = Stopwatch.StartNew();
                 // send the message and store it for later modification

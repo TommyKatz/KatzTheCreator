@@ -12,43 +12,24 @@ namespace KatzTheCreator.ModModules
             var rUser = Context.User as SocketGuildUser;
             var directorRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965695483068686367);
             var modRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965726434624688188);
-            var waitTimeSeven = 7000;
 
 
             if (rUser.Roles.Contains(directorRole) || rUser.Roles.Contains(modRole)){
 
                 if (userToBeJoined == null){
-
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
                     return;
                 } else if (userToBeJoined.VoiceChannel == null){
-
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, the user you are trying to join is not in a voice channel.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nThe user you are trying to join is not in a voice channel.");
                     return;
-
                 } else if (rUser.VoiceChannel == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you are not in a voice channel; Join one to use this.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou are not in a voice channel; Join one to use this.");
                     return;
                 } else {
                     var userToJoinVC = userToBeJoined.VoiceChannel.Id;
@@ -57,14 +38,9 @@ namespace KatzTheCreator.ModModules
                 }
 
             } else {
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = embedBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }

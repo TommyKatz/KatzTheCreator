@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System.Threading.Channels;
+using System;
 
 namespace KatzTheCreator.ModModules{
     public class Bring : ModuleBase<SocketCommandContext>{
@@ -18,36 +20,27 @@ namespace KatzTheCreator.ModModules{
             if (rUser.Roles.Contains(directorRole) || rUser.Roles.Contains(modRole)){
 
                 if (userToBeBrought == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou didn't specify a user; Identify them using their ``Discord ID`` or ``@Mention``.");
                     return;
-
                 } else if (userToBeBrought.VoiceChannel == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, the user you are trying to get is not in a voice channel.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
-                    await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
-                    return;
 
-                } else if (rUser.VoiceChannel == null){
-                    var embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithDescription($"{rUser.Mention}, you are not in a voice channel; Join one to use this.");
-                    Embed embed = embedBuilder.Build();
-                    var botReplyFailReason = await ReplyAsync(embed: embed);
                     await Context.Message.DeleteAsync();
-                    await Task.Delay(waitTimeSeven);
-                    await botReplyFailReason.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nThe user you are trying to get is not in a voice channel.");
+                    return;
+                } else if (rUser.VoiceChannel == null){
+
+                    await Context.Message.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nYou are not in a voice channel; Join one to use this.");
+                    return;
+                } else if (rUser.VoiceChannel == userToBeBrought.VoiceChannel){
+
+                    await Context.Message.DeleteAsync();
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                    "***Uh oh! Something went wrong...***\n\nThis user's already in your voice channel.");
                     return;
                 } else {
                     var rUserVC = rUser.VoiceChannel.Id;
@@ -56,14 +49,9 @@ namespace KatzTheCreator.ModModules{
                 }
 
             } else {
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithDescription($"{rUser.Mention}, You do not have permission to use this.");
-                Embed embed = embedBuilder.Build();
-                var botReplyFailPerms = await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
-                await Task.Delay(waitTimeSeven);
-                await botReplyFailPerms.DeleteAsync();
+                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
+                "***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
             }
         }
     }
