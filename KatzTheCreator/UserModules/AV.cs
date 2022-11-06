@@ -6,7 +6,6 @@ namespace KatzTheCreator.UserModules{
     public class AV : ModuleBase<SocketCommandContext>{
         [Command("av")]
         public async Task AVUser (SocketGuildUser userToBeAved = null){
-
             var rUser = Context.User as SocketGuildUser;
 
             if (userToBeAved == null){
@@ -22,8 +21,7 @@ namespace KatzTheCreator.UserModules{
                 await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
 
-            } else {
-
+            }else{
                 var embedBuilder = new EmbedBuilder()
                     .WithAuthor(userToBeAved)
                     .WithColor(Color.DarkPurple)

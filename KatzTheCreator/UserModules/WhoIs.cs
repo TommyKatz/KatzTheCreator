@@ -3,10 +3,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 namespace KatzTheCreator.UserModules{
-    public class WhoIs : ModuleBase<SocketCommandContext> {
+    public class WhoIs : ModuleBase<SocketCommandContext>{
         [Command("whois")]
         public async Task WhoIsUser(SocketGuildUser userToBeIDed =  null){
-
             var rUser = Context.User as SocketGuildUser;
 
             if (userToBeIDed == null){
@@ -25,8 +24,7 @@ namespace KatzTheCreator.UserModules{
                 await ReplyAsync(embed: embed);
                 await Context.Message.DeleteAsync();
 
-            } else {
-
+            }else{
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
                     .WithAuthor($"{userToBeIDed}")

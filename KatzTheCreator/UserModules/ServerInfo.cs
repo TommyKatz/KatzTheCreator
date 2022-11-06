@@ -1,15 +1,14 @@
-﻿using Discord.Commands;
-using Discord;
+﻿using Discord;
+using Discord.Commands;
 
-namespace KatzTheCreator.UserModules{
+namespace KatzTheCreator.UserModules
+{
     public class ServerInfo : ModuleBase<SocketCommandContext>{
         [Command("serverinfo")]
         public async Task PingAsync(){
-
             var boostCount = Context.Guild.PremiumSubscriptionCount;
         
             if (boostCount < 14){
-
                 EmbedBuilder builder = new EmbedBuilder();
 
                 builder.WithTitle($"{Context.Guild.Name}")
@@ -27,8 +26,7 @@ namespace KatzTheCreator.UserModules{
                 await ReplyAsync("", false, builder.Build());
                 await Context.Message.DeleteAsync();
 
-            } else if (boostCount == 14){
-
+            }else if (boostCount == 14){
                 EmbedBuilder builder = new EmbedBuilder();
 
                 builder.WithTitle($"{Context.Guild.Name}")
@@ -45,8 +43,7 @@ namespace KatzTheCreator.UserModules{
 
                 await ReplyAsync("", false, builder.Build());
                 await Context.Message.DeleteAsync();
-            } else {
-
+            }else{
                 EmbedBuilder builder = new EmbedBuilder();
 
                 builder.WithTitle($"{Context.Guild.Name}")

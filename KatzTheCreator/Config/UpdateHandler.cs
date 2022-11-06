@@ -1,11 +1,9 @@
-﻿using System.Reflection;
-using Discord.WebSocket;
 using Discord;
 using Discord.Commands;
-using Microsoft.VisualBasic;
+using Discord.WebSocket;
+using System.Reflection;
 
-namespace KatzTheCreator.Config
-{
+namespace KatzTheCreator.Config{
     public class UpdateHandler{
         
         private readonly DiscordSocketClient _client;
@@ -25,10 +23,85 @@ namespace KatzTheCreator.Config
             _client.UserJoined += AnnounceJoinedUser;
             _client.UserJoined += JoinLogging;
             _client.UserLeft += LeaveLogging;
+            _client.GuildMemberUpdated += UserUpdatedOps;
         }
 
         public async Task RegisterCommandAsync(){
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        }
+
+        public async Task UserUpdatedOps(Cacheable<SocketGuildUser, ulong> stateBefore, SocketGuildUser userStateAfter){
+            var userStateBefore = stateBefore.Value;
+            var boostRole = userStateAfter.Guild.Roles.FirstOrDefault(x => x.Id == 968257372973826088);
+            var loggingChannel = _client.GetChannel(965699174358216744) as SocketTextChannel;
+
+            if (userStateAfter.TimedOutUntil.HasValue){
+                var currentGuild = userStateAfter.Guild as IGuild;
+                var timeOutAuthor = (await currentGuild.GetAuditLogsAsync(actionType: ActionType.MemberUpdated)).FirstOrDefault().User;
+                var timoutReason = (await currentGuild.GetAuditLogsAsync(actionType: ActionType.MemberUpdated)).FirstOrDefault().Reason;
+
+                if (!string.IsNullOrEmpty(timoutReason)){
+                    try{
+                        var builder = new EmbedBuilder()
+                            .WithColor(Color.Gold)
+                            .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
+                            .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                            .WithDescription($"**Timed Out:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason:** {timoutReason}")
+                            .WithCurrentTimestamp();
+                        Embed embedTwo = builder.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    } catch (Exception){
+                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    }
+                } else{
+                    try{
+                        var builder = new EmbedBuilder()
+                            .WithColor(Color.Gold)
+                            .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
+                            .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                            .WithDescription($"**Timed Out:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason:** No Reason Provided.")
+                            .WithCurrentTimestamp();
+                        Embed embedTwo = builder.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    }catch (Exception){
+                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    }
+                }
+            }
+            
+            if (userStateBefore.TimedOutUntil.HasValue && !userStateAfter.TimedOutUntil.HasValue){
+                var currentGuild = userStateAfter.Guild as IGuild;
+                var timeOutAuthor = (await currentGuild.GetAuditLogsAsync(actionType: ActionType.MemberUpdated)).FirstOrDefault().User;
+                try{
+                    var builder = new EmbedBuilder()
+                        .WithColor(Color.Gold)
+                        .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
+                        .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                        .WithDescription($"**Timed Out Removed:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason cannot be provided.**")
+                        .WithCurrentTimestamp();
+                    Embed embedTwo = builder.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }catch (Exception){
+                    await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                }
+            }
+
+            if (!userStateBefore.Roles.Contains(boostRole) && userStateAfter.Roles.Contains(boostRole)){
+                var boostAnnounceChannel = _client.GetChannel(960957925143224343) as SocketTextChannel;
+                var boostCount = userStateAfter.Guild.PremiumSubscriptionCount;
+                var server = _client.GetGuild(960957925143224340);
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.Purple)
+                    .WithAuthor($"{userStateAfter}", userStateAfter.GetAvatarUrl())
+                    .WithThumbnailUrl("https://i.imgur.com/i0xdsgG.png")
+                    .WithDescription($"**Thank you for boosting {server} !**\n" +
+                    $"**We are now at {boostCount} boosts.**\n◇────────────────────────────◇");
+                Embed embed = embedBuilder.Build();
+
+                await boostAnnounceChannel.SendMessageAsync($"{userStateAfter.Mention}");
+                await boostAnnounceChannel.SendMessageAsync(embed: embed);
+            }
         }
 
         public async Task UserBannedLog(IUser userBanned, IGuild currentGuild){
@@ -57,7 +130,7 @@ namespace KatzTheCreator.Config
                         await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
                     }
 
-                } else {
+                }else{
                     try{
                         var builderTwo = new EmbedBuilder()
                             .WithColor(Color.DarkRed)
@@ -91,8 +164,7 @@ namespace KatzTheCreator.Config
                     .WithAuthor($"{unbanAuthor} (ID: {unbanAuthor.Id})", unbanAuthor.GetAvatarUrl())
                     .WithDescription($"**Unbanned:** {userUnbanned.Mention} *(ID: {userUnbanned.Id})*\n**Reason:** No Reason Provided")
                     .WithCurrentTimestamp()
-                    .WithFooter(footer =>
-                    {
+                    .WithFooter(footer =>{
                         footer
                         .WithText("Right Click");
                     });
@@ -105,7 +177,6 @@ namespace KatzTheCreator.Config
         }
 
         public async Task RegisterButtonHandler(SocketMessageComponent component){
-
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
@@ -287,6 +358,5 @@ namespace KatzTheCreator.Config
             IEmote leaveEmote = Emote.Parse("<a:leave:993953885339267173>");
             await loggingChannel.SendMessageAsync($"{leaveEmote} **{userLeave.Username}** has vanished.");
         }
-
     }
 }

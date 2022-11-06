@@ -1,8 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class KillSwitch : ModuleBase<SocketCommandContext> {
         [Command("killswitch")]
         public async Task BotShutdown(){
@@ -11,7 +10,6 @@ namespace KatzTheCreator.ModModules
             List<ulong> discordId = new List<ulong>();
             discordId.Add(135143527767080960); // katz
             discordId.Add(968134907270402058); // witchdoctor
-            discordId.Add(153643067516125185); // lamb
             IEnumerable<ulong> allowedIds = discordId;
 
             if (!allowedIds.Contains(rUser.Id)){
