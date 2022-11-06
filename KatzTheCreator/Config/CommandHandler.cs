@@ -1,18 +1,14 @@
-﻿using System.Reflection;
-using System.Threading.Channels;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using KatzTheCreator.UserModules;
+using System.Reflection;
 
-namespace KatzTheCreator.Config
-{
+namespace KatzTheCreator.Config{
     public class CommandHandler{
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
         
-
         public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services){
 
             _commands = commands;
@@ -43,7 +39,7 @@ namespace KatzTheCreator.Config
                 if (result.Error.Equals(CommandError.UnmetPrecondition)){
                     await message.DeleteAsync();
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
-                    $"***Uh oh! Something went wrong...***\n\nUnable to perform this action; {result.ErrorReason}");
+                    $"***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
                 }
                 
                 if (result.Error.Equals(CommandError.UnknownCommand)){

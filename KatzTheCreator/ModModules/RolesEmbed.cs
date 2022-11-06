@@ -13,7 +13,6 @@ namespace KatzTheCreator.ModModules{
             var getSCGRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
             var rKatz = Context.User as SocketGuildUser;
-
             var serverIconUrl = Context.Guild.IconUrl;
 
             var builder = new EmbedBuilder()

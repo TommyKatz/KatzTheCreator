@@ -1,10 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using System.Reflection.Metadata.Ecma335;
 
-namespace KatzTheCreator.ModModules
-{
+namespace KatzTheCreator.ModModules{
     public class CodeAlerts : ModuleBase<SocketCommandContext>{
         [Command("newcode")]
         public async Task CodeEmbed(char type = default, int amount = default, [Remainder] string content = null){
@@ -43,16 +41,12 @@ namespace KatzTheCreator.ModModules
                         var latestCommand = Context.Message.Timestamp.DateTime;
                         var latestMessage = messages.Last().Timestamp.DateTime;
 
-                        if ((latestCommand - latestMessage).TotalMinutes >= 30)
-                        {
-                            if (!allowedChars.Contains(type))
-                            {
+                        if ((latestCommand - latestMessage).TotalMinutes >= 30){
+                            if (!allowedChars.Contains(type)){
                                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                                 "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
                                 return;
-                            }
-                            else if (type.Equals('B'))
-                            {
+                            }else if (type.Equals('B')){
                                 await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                                 var builder = new EmbedBuilder()
@@ -68,10 +62,7 @@ namespace KatzTheCreator.ModModules
                                     });
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
-
-                            }
-                            else if (type.Equals('S'))
-                            {
+                            }else if (type.Equals('S')){
                                 await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                                 var builder = new EmbedBuilder()
@@ -88,9 +79,7 @@ namespace KatzTheCreator.ModModules
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
 
-                            }
-                            else if (type.Equals('F'))
-                            {
+                            }else if (type.Equals('F')){
                                 await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                                 var builder = new EmbedBuilder()
@@ -106,9 +95,8 @@ namespace KatzTheCreator.ModModules
                                     });
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
-                            }
-                            else if (type.Equals('C'))
-                            {
+
+                            }else if (type.Equals('C')){
                                 await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                                 var builder = new EmbedBuilder()
@@ -125,18 +113,12 @@ namespace KatzTheCreator.ModModules
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
                             }
-                        }
-                        else
-                        {
+                        }else{
 
-                            if (!allowedChars.Contains(type))
-                            {
+                            if (!allowedChars.Contains(type)){
                                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                                 "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
-
-                            }
-                            else if (type.Equals('B'))
-                            {
+                            }else if (type.Equals('B')){
                                 var builder = new EmbedBuilder()
                                     .WithColor(Color.DarkRed)
                                     .WithCurrentTimestamp()
@@ -151,9 +133,7 @@ namespace KatzTheCreator.ModModules
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
 
-                            }
-                            else if (type.Equals('S'))
-                            {
+                            }else if (type.Equals('S')){
                                 var builder = new EmbedBuilder()
                                     .WithColor(Color.DarkPurple)
                                     .WithCurrentTimestamp()
@@ -168,9 +148,7 @@ namespace KatzTheCreator.ModModules
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
 
-                            }
-                            else if (type.Equals('F'))
-                            {
+                            }else if (type.Equals('F')){
                                 var builder = new EmbedBuilder()
                                     .WithColor(Color.DarkBlue)
                                     .WithCurrentTimestamp()
@@ -184,9 +162,8 @@ namespace KatzTheCreator.ModModules
                                     });
                                 Embed embed = builder.Build();
                                 await announceChannel.SendMessageAsync(embed: embed);
-                            }
-                            else if (type.Equals('C'))
-                            {
+
+                            }else if (type.Equals('C')){
                                 var builder = new EmbedBuilder()
                                     .WithColor(Color.Teal)
                                     .WithCurrentTimestamp()
@@ -202,16 +179,13 @@ namespace KatzTheCreator.ModModules
                                 await announceChannel.SendMessageAsync(embed: embed);
                             }
                         }
-                    }
-                    catch (Exception){
-                        if (!allowedChars.Contains(type))
-                        {
+                    }catch (Exception){
+
+                        if (!allowedChars.Contains(type)){
                             await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                             "***Uh oh! Something went wrong...***\n\nThis reward doesn't exist, here is the ones that do: `B` = Bloodpoints `S` = Iridescent Shards `F` = Rift Fragments *(Case Sensitive)*");
                             return;
-                        }
-                        else if (type.Equals('B'))
-                        {
+                        }else if (type.Equals('B')){
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -228,9 +202,7 @@ namespace KatzTheCreator.ModModules
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
 
-                        }
-                        else if (type.Equals('S'))
-                        {
+                        }else if (type.Equals('S')){
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -247,9 +219,7 @@ namespace KatzTheCreator.ModModules
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
 
-                        }
-                        else if (type.Equals('F'))
-                        {
+                        }else if (type.Equals('F')){
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()
@@ -265,9 +235,7 @@ namespace KatzTheCreator.ModModules
                                 });
                             Embed embed = builder.Build();
                             await announceChannel.SendMessageAsync(embed: embed);
-                        }
-                        else if (type.Equals('C'))
-                        {
+                        }else if (type.Equals('C')){
                             await announceChannel.SendMessageAsync("<@&1036799014508703794>");
 
                             var builder = new EmbedBuilder()

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +22,6 @@ namespace KatzTheCreator.Config{
                 GatewayIntents.Guilds | GatewayIntents.GuildIntegrations
                 
             };
-            
-            
 
             _client = new DiscordSocketClient(config);
 

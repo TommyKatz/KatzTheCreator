@@ -1,5 +1,5 @@
-﻿using Discord.Commands;
-using Discord;
+﻿using Discord;
+using Discord.Commands;
 
 namespace KatzTheCreator.UserModules{
     public class Help : ModuleBase<SocketCommandContext>{

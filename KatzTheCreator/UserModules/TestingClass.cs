@@ -1,10 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Interactions;
-using KatzTheCreator.ModModules;
-using System.Reactive.Linq;
+using Discord.WebSocket;
+using System.Net;
 
-namespace KatzTheCreator.UserModules{
+namespace KatzTheCreator.UserModules
+{
     public class TestingClass : ModuleBase<SocketCommandContext>{
         [Command("test")]
         public async Task ReactionsEmbed(){
@@ -18,9 +18,18 @@ namespace KatzTheCreator.UserModules{
         }
 
         [Command("test2")]
-        public async Task TestingMethod()
-        {
-            await ReplyAsync("wow, you have permission !");
+        public async Task UploadEmoji(SocketGuildUser user){
+            var grabAvatarURL = user.GetAvatarUrl();
+            var uploadImageChannel = Context.Guild.GetChannel(988184539455172688) as ISocketMessageChannel;
+
+            await uploadImageChannel.SendFileAsync(grabAvatarURL);
+            var imageMessage = await uploadImageChannel.GetMessagesAsync(1).FlattenAsync();
+            var attachment = imageMessage.Last().Attachments.FirstOrDefault();
+            //await Context.Guild.CreateEmoteAsync("emojiName", attachment);
+            
+
+
+                
         }
     }
 }
