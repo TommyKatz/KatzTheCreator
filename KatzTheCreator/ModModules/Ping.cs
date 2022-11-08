@@ -8,7 +8,7 @@ namespace KatzTheCreator.ModModules{
     public class Ping : ModuleBase<SocketCommandContext>{
         [Command("ping")]
         [Alias("latency")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
         [Summary("Shows the websocket connection's latency and time it takes for me send a message.")]
         public async Task PingAsync(){
             var rUser = Context.User as SocketGuildUser;

@@ -248,18 +248,41 @@ namespace KatzTheCreator.Config{
         }
 
         public async Task MessageOpsAsync(SocketMessage msg){
-            if (msg.Author.IsBot) return;
+            if (string.IsNullOrEmpty(msg.Content)) return;
+            if (msg.Author.IsBot || msg.Channel.GetChannelType() == ChannelType.DM) return;
 
-            Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
             Random rnd = new Random();
             int number = rnd.Next(1, 101);
 
             if (number <= 4){ // 4% chance
-                await msg.AddReactionAsync(hmmEmote);
-            }
 
-            // under construction 
-            // flags a channel with no messages as spam
+                try{
+                    Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
+                    Emote ummEmote = Emote.Parse("<:umm:1038944243655397558>");
+                    Emote youGoodEmote = Emote.Parse("<:yougood:1038944411196866681>");
+                    Emote lowIqEmote = Emote.Parse("<:lowiq:1038944596253745273>");
+                    Emote whyYouLikeThisEmote = Emote.Parse("<:whyyoulikethis:1038944821953429584>");
+
+                    Random rndTwo = new Random();
+                    int numberTwo = rndTwo.Next(1, 6);
+
+                    if (numberTwo == 1){
+                        await msg.AddReactionAsync(hmmEmote);
+                    }else if (numberTwo == 2){
+                        await msg.AddReactionAsync(ummEmote);
+                    }else if (numberTwo == 3){
+                        await msg.AddReactionAsync(youGoodEmote);
+                    }else if (numberTwo == 4){
+                        await msg.AddReactionAsync(lowIqEmote);
+                    }else{
+                        await msg.AddReactionAsync(whyYouLikeThisEmote);
+                    }
+                }catch (Exception){
+                    // ignore
+                }
+                
+            }
+            // under construction
             /*try{
                 var socketMessage = msg as SocketUserMessage;
                 var userSpamming = socketMessage.Author as SocketGuildUser;
@@ -274,7 +297,7 @@ namespace KatzTheCreator.Config{
                 var rcsLogChannel = _client.GetChannel(1027256422095925338) as SocketTextChannel;
                 var timeResult = (newSpamTime - oldSpamTime).TotalSeconds;
 
-                if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch && messages.All(5))
+                if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch && messages.LongCount() == 5)
                 {
                     await userSpamming.AddRoleAsync(mutedRole);
                     await ((ITextChannel)socketMessage.Channel).DeleteMessagesAsync(messages);
@@ -311,8 +334,7 @@ namespace KatzTheCreator.Config{
                 }
             } catch (Exception){
                 //ignore
-            }*/
-            
+            } */ 
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){

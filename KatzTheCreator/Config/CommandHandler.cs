@@ -23,11 +23,13 @@ namespace KatzTheCreator.Config{
         }
 
         private async Task HandleCommandAsync(SocketMessage arg){
+            if (string.IsNullOrEmpty(arg.Content)) return;
             var message = arg as SocketUserMessage;
-            var context = new SocketCommandContext(_client, message);
 
             if (message.Author.IsBot || message.Channel.GetChannelType() == ChannelType.DM) return;
-            
+
+            var context = new SocketCommandContext(_client, message);
+
             int argPos = 0;
 
             if (message.HasStringPrefix("?", ref argPos)){
