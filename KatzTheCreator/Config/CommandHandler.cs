@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Net;
 using Discord.WebSocket;
+using Newtonsoft.Json;
 using System.Reflection;
 
 namespace KatzTheCreator.Config{
@@ -32,7 +34,7 @@ namespace KatzTheCreator.Config{
 
             int argPos = 0;
 
-            if (message.HasStringPrefix("?", ref argPos)){
+            if (message.HasStringPrefix("t?", ref argPos)){
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
                 var rUser = message.Author;
 
