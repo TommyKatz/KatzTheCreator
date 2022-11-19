@@ -16,7 +16,7 @@ namespace KatzTheCreator.UserModules{
                     .WithThumbnailUrl(rUser.GetAvatarUrl())
                     .AddField("ID", $"{rUser.Id}")
                     .AddField("Account Created On", $"{rUser.CreatedAt.UtcDateTime.ToString("D")}")
-                    .AddField("Joined Server On", $"{rUser.JoinedAt.Value.UtcDateTime.ToString("D")}")
+                    .AddField("Joined Server On", $"{rUser.JoinedAt.Value.UtcDateTime.ToString("D")} ({((int)(DateTime.UtcNow - rUser.JoinedAt.Value.UtcDateTime).TotalDays)} days)")
                     .AddField("Server Roles", $"{string.Join(", ", rUser.Roles)}")
                     .AddField("Status", $"{rUser.Status}");
 
@@ -31,7 +31,7 @@ namespace KatzTheCreator.UserModules{
                     .WithThumbnailUrl(userToBeIDed.GetAvatarUrl())
                     .AddField("ID", $"{userToBeIDed.Id}")
                     .AddField("Account Created On", $"{userToBeIDed.CreatedAt.UtcDateTime.ToString("D")}")
-                    .AddField("Joined Server On", $"{userToBeIDed.JoinedAt.Value.UtcDateTime.ToString("D")}")
+                    .AddField("Joined Server On", $"{userToBeIDed.JoinedAt.Value.UtcDateTime.ToString("D")} ({((int)(DateTime.UtcNow - userToBeIDed.JoinedAt.Value.UtcDateTime).TotalDays)} ago)")
                     .AddField("Server Roles", $"{string.Join(", ", userToBeIDed.Roles)}")
                     .AddField("Status", $"{userToBeIDed.Status}");
 

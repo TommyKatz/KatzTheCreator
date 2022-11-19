@@ -7,14 +7,8 @@ namespace KatzTheCreator.UserModules
 {
     public class TestingClass : ModuleBase<SocketCommandContext>{
         [Command("test")]
-        public async Task ReactionsEmbed(){
-            List<string> passionItems = new List<string>();
-            passionItems.Add("Director");
-            passionItems.Add("Religious Critic");
-            passionItems.Add("Political Enthusiast");
-            IEnumerable<string> aboutMe = passionItems;
-
-            await Context.Channel.SendMessageAsync($"{string.Join(", ", aboutMe)}");
+        public async Task GrabbingEmbedReactions(ulong msg){
+            
         }
 
         [Command("test2")]
@@ -25,11 +19,7 @@ namespace KatzTheCreator.UserModules
             await uploadImageChannel.SendFileAsync(grabAvatarURL);
             var imageMessage = await uploadImageChannel.GetMessagesAsync(1).FlattenAsync();
             var attachment = imageMessage.Last().Attachments.FirstOrDefault();
-            //await Context.Guild.CreateEmoteAsync("emojiName", attachment);
-            
-
-
-                
+            //await Context.Guild.CreateEmoteAsync("emojiName", attachment);        
         }
     }
 }
