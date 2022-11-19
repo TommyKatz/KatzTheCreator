@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using System.Reflection;
 
@@ -24,6 +25,10 @@ namespace KatzTheCreator.Config{
             _client.UserJoined += JoinLogging;
             _client.UserLeft += LeaveLogging;
             _client.GuildMemberUpdated += UserUpdatedOps;
+            _client.UserVoiceStateUpdated += UserVoiceStateChanged;
+            _client.MessageDeleted += MessageDeletedLog;
+            _client.MessageUpdated += MessageEditedLog;
+            _client.MessagesBulkDeleted += MessageBulkDeleteLog;
         }
 
         public async Task RegisterCommandAsync(){
@@ -280,61 +285,184 @@ namespace KatzTheCreator.Config{
                 }catch (Exception){
                     // ignore
                 }
-                
             }
-            // under construction
-            /*try{
-                var socketMessage = msg as SocketUserMessage;
-                var userSpamming = socketMessage.Author as SocketGuildUser;
-                var messages = await msg.Channel.GetMessagesAsync(5).FlattenAsync();
+        }
 
-                //bool messagesComparedMatch = messages.All(x => x.Content == socketMessage.Content); // Compares messages to see if they match
-                bool messageAuthorsMatch = messages.All(a => a.Author == socketMessage.Author);
-                var newSpamTime = socketMessage.Timestamp.DateTime;
-                var oldSpamTime = messages.Last().Timestamp.DateTime;
-                var bugsServer = _client.GetGuild(960957925143224340);
-                var mutedRole = bugsServer.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
-                var rcsLogChannel = _client.GetChannel(1027256422095925338) as SocketTextChannel;
-                var timeResult = (newSpamTime - oldSpamTime).TotalSeconds;
+        public async Task MessageDeletedLog(Cacheable<IMessage, ulong> msg, Cacheable<IMessageChannel, ulong> channel){
+            try{
+                var loggingChannel = _client.GetChannel(965723854955773952) as SocketTextChannel;
+                var bot = _client.CurrentUser;
 
-                if ((newSpamTime - oldSpamTime).TotalSeconds <= 5 && messageAuthorsMatch && messages.LongCount() == 5)
-                {
-                    await userSpamming.AddRoleAsync(mutedRole);
-                    await ((ITextChannel)socketMessage.Channel).DeleteMessagesAsync(messages);
+                List<ulong> channelId = new List<ulong>();
+                channelId.Add(960957925143224343); // gen
+                channelId.Add(1009837099085742110); // announcemnets
+                channelId.Add(965666858466426920); // rules
+                channelId.Add(1020452407324459069); // guide
+                channelId.Add(988184539455172688); // server dev
+                IEnumerable<ulong> allowedIds = channelId;
 
-                    var embedBuilder = new EmbedBuilder()
-                        .WithTitle("RCS ALERT: Spam Detection")
-                        .WithColor(Color.DarkRed)
-                        .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n\nThis account has been flagged by our Raid Control Systems,\nan indefinite mute has been applied while your conduct's investigated.")
-                        .WithCurrentTimestamp()
-                        .WithFooter(footer =>
-                        {
-                            footer
-                            .WithText($"Muted by RCS");
-                        });
+                if (!msg.HasValue || !allowedIds.Contains(channel.Id)) return;
 
-                    Embed embed = embedBuilder.Build();
-                    await socketMessage.Channel.SendMessageAsync(embed: embed);
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkMagenta)
+                    .WithAuthor($"{msg.Value.Author}", msg.Value.Author.GetAvatarUrl())
+                    .WithDescription($"Message deleted in <#{channel.Id}>")
+                    .AddField("Content", $"{msg.Value.Content}")
+                    .AddField("Date", $"<t:{msg.Value.Timestamp.ToUnixTimeSeconds()}:F>")
+                    .AddField("ID", $"```ini\nUser = {msg.Value.Author.Id}\nMessage = {msg.Value.Id}\nChannel = {channel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
 
-                    var embedBuilderTwo = new EmbedBuilder()
-                        .WithTitle("Spam Detection Flag")
-                        .WithColor(Color.DarkRed)
-                        .WithDescription($"***Presumed Suspect:*** {userSpamming.Mention} *(ID: {userSpamming.Id})*\n***Time Span:*** {timeResult} second(s)\n***Content Sent:***\n {string.Join(",\n\n", messages)}")
-                        .WithCurrentTimestamp();
+                var embed = embedBuilder.Build();
 
-                    Embed embedTwo = embedBuilderTwo.Build();
-                    await rcsLogChannel.SendMessageAsync(embed: embedTwo);
-
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("ALERT: Spam Detected");
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"Suspected User: {socketMessage.Author} Spam Time: {timeResult}");
-
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
-            } catch (Exception){
+                await loggingChannel.SendMessageAsync(embed: embed);
+            }
+            catch (Exception){
                 //ignore
-            } */ 
+            } 
+            
+        }
+
+        public async Task MessageEditedLog(Cacheable<IMessage, ulong> msgBefore, SocketMessage msgAfter, ISocketMessageChannel channel){
+            try{
+                var loggingChannel = _client.GetChannel(965723854955773952) as SocketTextChannel;
+                var bot = _client.CurrentUser;
+
+                List<ulong> channelId = new List<ulong>();
+                channelId.Add(960957925143224343); // gen
+                channelId.Add(1009837099085742110); // announcemnets
+                channelId.Add(965666858466426920); // rules
+                channelId.Add(1020452407324459069); // guide
+                IEnumerable<ulong> allowedIds = channelId;
+
+                if (!allowedIds.Contains(channel.Id)) return;
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkMagenta)
+                    .WithAuthor($"{msgAfter.Author}", msgAfter.Author.GetAvatarUrl())
+                    .WithDescription($"Message edited in <#{channel.Id}>")
+                    .AddField("Now", $"{msgAfter}")
+                    .AddField("Previous", $"{msgBefore.Value.Content}")
+                    .AddField("ID", $"```ini\nUser = {msgAfter.Author.Id}\nMessage = {msgAfter.Id}\nChannel = {channel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+
+                var embed = embedBuilder.Build();
+
+                await loggingChannel.SendMessageAsync(embed: embed);
+            }catch (Exception){ 
+                // ignore
+            }
+            
+        }
+
+        public async Task MessageBulkDeleteLog(IReadOnlyCollection<Cacheable<IMessage, ulong>> msgs, Cacheable<IMessageChannel, ulong> channel){
+
+            try{
+                var loggingChannel = _client.GetChannel(965723854955773952) as SocketTextChannel;
+                var bot = _client.CurrentUser;
+
+                List<ulong> channelId = new List<ulong>();
+                channelId.Add(960957925143224343); // gen
+                channelId.Add(1009837099085742110); // announcemnets
+                channelId.Add(965666858466426920); // rules
+                channelId.Add(1020452407324459069); // guide
+                IEnumerable<ulong> allowedIds = channelId;
+
+                if (!allowedIds.Contains(channel.Id)) return;
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.Magenta)
+                    .WithDescription($"**{msgs.Count}** message(s) were deleted in <#{channel.Id}>")
+                    .AddField("Content", $"{string.Join(", \n", msgs.Select(x => x.Value.Content))}")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+
+                var embed = embedBuilder.Build();
+
+                await loggingChannel.SendMessageAsync(embed: embed);
+            }
+            catch (Exception){
+                // ignore        
+            }
+
+            
+
+        }
+
+        public async Task UserVoiceStateChanged(IUser user, SocketVoiceState vStateBefore, SocketVoiceState vStateAfter){
+
+            var loggingChannel = _client.GetChannel(965699096352526366) as SocketTextChannel;
+            var bot = _client.CurrentUser;
+
+            if (vStateBefore.VoiceChannel == null){ // joins vc
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkBlue)
+                    .WithAuthor($"{user}", user.GetAvatarUrl())
+                    .WithDescription($"**{user}** joined voice channel: {vStateAfter.VoiceChannel}")
+                    .AddField("Channel", $"{vStateAfter.VoiceChannel.Mention}")
+                    .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateAfter.VoiceChannel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    
+                var embed = embedBuilder.Build();
+
+                await loggingChannel.SendMessageAsync(embed: embed);
+
+            } else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkBlue)
+                    .WithAuthor($"{user}", user.GetAvatarUrl())
+                    .WithDescription($"**{user}** left voice channel: {vStateBefore.VoiceChannel}")
+                    .AddField("Channel", $"{vStateBefore.VoiceChannel.Mention}")
+                    .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateBefore.VoiceChannel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                var embed = embedBuilder.Build();
+
+                await loggingChannel.SendMessageAsync(embed: embed);
+
+            } else { // moved vcs
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkBlue)
+                    .WithAuthor($"{user}", user.GetAvatarUrl())
+                    .WithDescription($"**{user}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
+                    .AddField("Channels", $"Before: {vStateBefore.VoiceChannel.Mention}\nAfter: {vStateAfter.VoiceChannel.Mention}")
+                    .AddField("ID", $"```ini\nUser = {user.Id}\nNew = {vStateAfter.VoiceChannel.Id}\nOld = {vStateBefore.VoiceChannel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                var embed = embedBuilder.Build();
+
+                await loggingChannel.SendMessageAsync(embed: embed);
+            }
+
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
