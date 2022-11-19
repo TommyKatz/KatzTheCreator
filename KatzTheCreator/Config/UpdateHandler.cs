@@ -298,7 +298,6 @@ namespace KatzTheCreator.Config{
                 channelId.Add(1009837099085742110); // announcemnets
                 channelId.Add(965666858466426920); // rules
                 channelId.Add(1020452407324459069); // guide
-                channelId.Add(988184539455172688); // server dev
                 IEnumerable<ulong> allowedIds = channelId;
 
                 if (!msg.HasValue || !allowedIds.Contains(channel.Id)) return;
@@ -404,7 +403,7 @@ namespace KatzTheCreator.Config{
 
         public async Task UserVoiceStateChanged(IUser user, SocketVoiceState vStateBefore, SocketVoiceState vStateAfter){
 
-            var loggingChannel = _client.GetChannel(965699096352526366) as SocketTextChannel;
+            var loggingChannel = _client.GetChannel(988184539455172688) as SocketTextChannel;
             var bot = _client.CurrentUser;
 
             if (vStateBefore.VoiceChannel == null){ // joins vc
@@ -444,7 +443,7 @@ namespace KatzTheCreator.Config{
 
                 await loggingChannel.SendMessageAsync(embed: embed);
 
-            } else { // moved vcs
+            } else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
@@ -461,6 +460,8 @@ namespace KatzTheCreator.Config{
                 var embed = embedBuilder.Build();
 
                 await loggingChannel.SendMessageAsync(embed: embed);
+            } else {
+                //ignore
             }
 
         }

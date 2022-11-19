@@ -39,7 +39,7 @@ namespace KatzTheCreator.ModModules{
                     await userToBeUnmuted.SendMessageAsync($"You have been unmuted in **Bugs By Daylight** for **{unmuteReason}**.\n~\n Withdrawn by {rUserHighestRole}: {rUser.Mention}\n~\n*You may now type and rejoin voice channels again.*");
                 }catch{
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
-                    $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the muted user.");
+                    $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the unmuted user.");
                 }
 
                 await userToBeUnmuted.RemoveRoleAsync(mutedRole);

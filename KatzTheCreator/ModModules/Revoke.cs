@@ -35,7 +35,7 @@ namespace KatzTheCreator.ModModules{
                         await userToBeRevoked.SendMessageAsync($"You been revoked access from **Bugs By Daylight** for **{revokeReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *You must be re-invited to join this server again.*");
                     }catch (Exception){
                         await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
-                        $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the muted user.");
+                        $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the revoked user.");
                     }
 
                     var serverName = Context.Guild.Name;
