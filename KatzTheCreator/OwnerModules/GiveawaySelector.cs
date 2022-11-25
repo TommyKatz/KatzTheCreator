@@ -6,9 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KatzTheCreator.ModModules
+namespace KatzTheCreator.OwnerModules
 {
-    public class GiveawaySelector : ModuleBase<SocketCommandContext>{
+    public class GiveawaySelector : ModuleBase<SocketCommandContext>
+    {
         [Command("gaw")]
         [RequireOwner]
         public async Task GrabbingEmbedReactions(ulong msg)

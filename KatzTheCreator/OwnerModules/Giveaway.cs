@@ -2,26 +2,33 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace KatzTheCreator.ModModules
+namespace KatzTheCreator.OwnerModules
 {
-    public class Giveaway : ModuleBase<SocketCommandContext> {
+    public class Giveaway : ModuleBase<SocketCommandContext>
+    {
         [Command("newga")]
         [RequireOwner]
-        public async Task GiveawayEmbed(string pictureLink = null, [Remainder]string giveawayContent = null){
+        public async Task GiveawayEmbed(string pictureLink = null, [Remainder] string giveawayContent = null)
+        {
 
             var rUser = Context.User as SocketGuildUser;
 
-            if (string.IsNullOrEmpty(pictureLink) || !pictureLink.StartsWith("https://")){
+            if (string.IsNullOrEmpty(pictureLink) || !pictureLink.StartsWith("https://"))
+            {
                 await Context.Message.DeleteAsync();
                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                 "***Uh oh! Something went wrong...***\n\nLink is null or incorrect format; **Copy image address**.");
                 return;
-            } else if (string.IsNullOrEmpty(giveawayContent)){
+            }
+            else if (string.IsNullOrEmpty(giveawayContent))
+            {
                 await Context.Message.DeleteAsync();
                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                 "***Uh oh! Something went wrong...***\n\nYou didn't specify the content; Content must be provided to use this.");
                 return;
-            }else if (pictureLink.EndsWith(".png") || pictureLink.EndsWith(".jpg")){
+            }
+            else if (pictureLink.EndsWith(".png") || pictureLink.EndsWith(".jpg"))
+            {
                 Emote joinEmote = Emote.Parse("<a:join:993953953832251542>");
                 Emote leftDownEmote = Emote.Parse("<:downleft:1039620899894218763>");
                 Emote rightDownEmote = Emote.Parse("<:downright:1039620982790422658>");
@@ -34,7 +41,8 @@ namespace KatzTheCreator.ModModules
                     .AddField($"Content in Giveaway:", $"{giveawayContent}")
                     .WithImageUrl($"{pictureLink}")
                     .WithCurrentTimestamp()
-                    .WithFooter(footer =>{
+                    .WithFooter(footer =>
+                    {
                         footer
                         .WithText($"Hosted by {rUser}")
                         .WithIconUrl(rUser.GetAvatarUrl());
@@ -42,7 +50,9 @@ namespace KatzTheCreator.ModModules
                 Embed embed = embedBuilder.Build();
                 var botReply = await ReplyAsync(embed: embed);
                 await botReply.AddReactionAsync(joinEmote);
-            } else {
+            }
+            else
+            {
                 await Context.Message.DeleteAsync();
                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                 "***Uh oh! Something went wrong...***\n\nIncorrect format, link needs to end with .png or .jpg; **Copy image address**.");

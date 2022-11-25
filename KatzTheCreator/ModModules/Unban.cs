@@ -21,27 +21,45 @@ namespace KatzTheCreator.ModModules{
                 "***Uh oh! Something went wrong...***\n\nYou didn't state a reason; A reason must be provided to use this.");
                 return;
             }else{
-                // Sends ban message in current text channel
-                var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
+                var rUserHighestRole = rUser.Roles.MaxBy(r => r.Position);
+                var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
                 var serverName = Context.Guild.Name;
                 var serverIconUrl = Context.Guild.IconUrl;
 
                 await Context.Guild.RemoveBanAsync(userToBeUnbanned);
                 await Context.Message.DeleteAsync();
-                var builder = new EmbedBuilder()
-                .WithColor(Color.DarkPurple)
-                .WithThumbnailUrl(serverIconUrl)
-                .WithCurrentTimestamp()
-                .WithDescription($"<@{userToBeUnbanned}> **has been unbanned from\n {serverName}.**\n\n **Reason:** {unbanReason}.")
-                .WithFooter(footer =>
-                {
-                    footer
-                    .WithText($"Unbanned by {rUserHighestRole} | {rUser}")
-                    .WithIconUrl(rUser.GetAvatarUrl());
-                });
-                Embed embed = builder.Build();
-                await ReplyAsync(embed: embed);
 
+                if (removedDefaults.Count() != 0){
+                    var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;
+                    var builder = new EmbedBuilder()
+                        .WithColor(rUserColor)
+                        .WithThumbnailUrl(serverIconUrl)
+                        .WithCurrentTimestamp()
+                        .WithDescription($"<@{userToBeUnbanned}> **has been unbanned from\n {serverName}.**\n\n **Reason:** {unbanReason}.")
+                        .WithFooter(footer =>
+                        {
+                            footer
+                            .WithText($"Unbanned by {rUserHighestRole} | {rUser}")
+                            .WithIconUrl(rUser.GetAvatarUrl());
+                        });
+                    Embed embed = builder.Build();
+                    await ReplyAsync(embed: embed);
+                }
+                else{
+                    var builder = new EmbedBuilder()
+                        .WithColor(Color.DarkPurple)
+                        .WithThumbnailUrl(serverIconUrl)
+                        .WithCurrentTimestamp()
+                        .WithDescription($"<@{userToBeUnbanned}> **has been unbanned from\n {serverName}.**\n\n **Reason:** {unbanReason}.")
+                        .WithFooter(footer =>
+                        {
+                            footer
+                            .WithText($"Unbanned by {rUserHighestRole} | {rUser}")
+                            .WithIconUrl(rUser.GetAvatarUrl());
+                        });
+                    Embed embed = builder.Build();
+                    await ReplyAsync(embed: embed);
+                }
 
                 // Sends Embed to Logging Channel
                 var builderTwo = new EmbedBuilder()

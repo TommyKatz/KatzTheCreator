@@ -19,7 +19,8 @@ namespace KatzTheCreator.ModModules{
 
             var userHierachyPos = userToBeRevoked.Hierarchy;
             var moderatorHierachyPos = rUser.Hierarchy;
-            var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
+            var rUserHighestRole = rUser.Roles.MaxBy(r => r.Position);
+            var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
 
             if (moderatorHierachyPos > userHierachyPos){
 
@@ -42,18 +43,36 @@ namespace KatzTheCreator.ModModules{
                     var serverIconUrl = Context.Guild.IconUrl;
 
                     await userToBeRevoked.KickAsync(revokeReason);
-                    var builder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithThumbnailUrl(serverIconUrl)
-                    .WithCurrentTimestamp()
-                    .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
-                    .WithFooter(footer =>{
-                        footer
-                        .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
-                        .WithIconUrl(rUser.GetAvatarUrl());
-                    });
-                    Embed embed = builder.Build();
-                    await ReplyAsync(embed: embed);
+
+                    if (removedDefaults.Count() != 0){
+                        var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;
+                        var builder = new EmbedBuilder()
+                            .WithColor(rUserColor)
+                            .WithThumbnailUrl(serverIconUrl)
+                            .WithCurrentTimestamp()
+                            .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
+                            .WithFooter(footer => {
+                                footer
+                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
+                                .WithIconUrl(rUser.GetAvatarUrl());
+                            });
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
+                    }
+                    else{
+                        var builder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithThumbnailUrl(serverIconUrl)
+                            .WithCurrentTimestamp()
+                            .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
+                            .WithFooter(footer => {
+                                footer
+                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
+                                .WithIconUrl(rUser.GetAvatarUrl());
+                            });
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
+                    }
 
                     // Sends Embed to Logging Channel
                     var builderTwo = new EmbedBuilder()
