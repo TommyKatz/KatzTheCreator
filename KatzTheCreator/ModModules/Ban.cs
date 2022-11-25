@@ -9,7 +9,8 @@ namespace KatzTheCreator.ModModules{
         [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task BanUserMention(ulong userToBeBanned = default, [Remainder] string banReason = null){
             var rUser = Context.User as SocketGuildUser;
-            var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
+            var rUserHighestRole = rUser.Roles.MaxBy(r => r.Position);
+            var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
             var serverName = Context.Guild.Name;
             var serverIconUrl = Context.Guild.IconUrl;
             var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel;
@@ -40,18 +41,36 @@ namespace KatzTheCreator.ModModules{
                 }else{
                     await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser}: {banReason}");
                     await Context.Message.DeleteAsync();
-                    var builder = new EmbedBuilder()
-                    .WithColor(Color.DarkPurple)
-                    .WithThumbnailUrl(serverIconUrl)
-                    .WithCurrentTimestamp()
-                    .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
-                    .WithFooter(footer => {
-                        footer
-                        .WithText($"Banned by {rUserHighestRole} | {rUser}")
-                        .WithIconUrl(rUser.GetAvatarUrl());
-                    });
-                    Embed embed = builder.Build();
-                    await ReplyAsync(embed: embed);
+
+                    if (removedDefaults.Count() != 0){
+                        var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;
+                        var builder = new EmbedBuilder()
+                            .WithColor(rUserColor)
+                            .WithThumbnailUrl(serverIconUrl)
+                            .WithCurrentTimestamp()
+                            .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
+                            .WithFooter(footer => {
+                                footer
+                                .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                .WithIconUrl(rUser.GetAvatarUrl());
+                                });
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
+                    }
+                    else{
+                        var builder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithThumbnailUrl(serverIconUrl)
+                            .WithCurrentTimestamp()
+                            .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
+                            .WithFooter(footer => {
+                                footer
+                                .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                .WithIconUrl(rUser.GetAvatarUrl());
+                            });
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
+                    }
 
                     // Sends Embed to Logging Channel
                     var builderTwo = new EmbedBuilder()
@@ -82,18 +101,36 @@ namespace KatzTheCreator.ModModules{
                         }
 
                         await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser}: {banReason}");
-                        var builder = new EmbedBuilder()
-                        .WithColor(Color.DarkPurple)
-                        .WithThumbnailUrl(serverIconUrl)
-                        .WithCurrentTimestamp()
-                        .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
-                        .WithFooter(footer => {
-                            footer
-                            .WithText($"Banned by {rUserHighestRole} | {rUser}")
-                            .WithIconUrl(rUser.GetAvatarUrl());
-                        });
-                        Embed embed = builder.Build();
-                        await ReplyAsync(embed: embed);
+
+                        if (removedDefaults.Count() != 0){
+                            var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;
+
+                            var builder = new EmbedBuilder()
+                                .WithColor(rUserColor)
+                                .WithThumbnailUrl(serverIconUrl)
+                                .WithCurrentTimestamp()
+                                .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
+                                .WithFooter(footer => {
+                                    footer
+                                    .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                    .WithIconUrl(rUser.GetAvatarUrl());
+                                });
+                            Embed embed = builder.Build();
+                            await ReplyAsync(embed: embed);
+                        }else{
+                            var builder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithThumbnailUrl(serverIconUrl)
+                                .WithCurrentTimestamp()
+                                .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
+                                .WithFooter(footer => {
+                                    footer
+                                    .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                    .WithIconUrl(rUser.GetAvatarUrl());
+                                });
+                            Embed embed = builder.Build();
+                            await ReplyAsync(embed: embed);
+                        }
 
                         // Sends Embed to Logging Channel
                         var builderTwo = new EmbedBuilder()

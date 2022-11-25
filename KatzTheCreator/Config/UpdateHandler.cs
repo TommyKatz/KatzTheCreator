@@ -403,8 +403,8 @@ namespace KatzTheCreator.Config{
         }
 
         public async Task UserVoiceStateChanged(IUser user, SocketVoiceState vStateBefore, SocketVoiceState vStateAfter){
-
             var loggingChannel = _client.GetChannel(965699096352526366) as SocketTextChannel;
+            var createVcChannel = _client.GetChannel(1045071639295053854) as SocketVoiceChannel;
             var bot = _client.CurrentUser;
 
             if (vStateBefore.VoiceChannel == null){ // joins vc
@@ -444,7 +444,7 @@ namespace KatzTheCreator.Config{
 
                 await loggingChannel.SendMessageAsync(embed: embed);
 
-            } else { // moved vcs
+            } else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
@@ -462,6 +462,31 @@ namespace KatzTheCreator.Config{
 
                 await loggingChannel.SendMessageAsync(embed: embed);
             }
+
+            if (vStateAfter.VoiceChannel == createVcChannel){
+                var guildUser = user as SocketGuildUser;
+                var categoryId = createVcChannel.CategoryId;
+                var channelOverwrites = new OverwritePermissions(moveMembers: PermValue.Allow);
+
+                var newVC = await guildUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
+
+                await newVC.AddPermissionOverwriteAsync(guildUser, channelOverwrites);
+
+                await guildUser.ModifyAsync(x => { x.Channel = newVC; });
+
+            }
+
+            if (vStateBefore.VoiceChannel != null){
+                if (vStateBefore.VoiceChannel != createVcChannel){
+                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931 && vStateBefore.VoiceChannel.ConnectedUsers.Count == 0){
+
+                        await vStateBefore.VoiceChannel.DeleteAsync();
+                    }
+                }
+            }
+            
+
+            
 
         }
 

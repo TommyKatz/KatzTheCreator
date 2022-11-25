@@ -1,11 +1,14 @@
 ﻿using Discord;
 using Discord.Commands;
 
-namespace KatzTheCreator.ModModules{
-    public class CodesEmbed : ModuleBase<SocketCommandContext>{
+namespace KatzTheCreator.OwnerModules
+{
+    public class CodesEmbed : ModuleBase<SocketCommandContext>
+    {
         [Command("CodesEmbedPerm")]
         [RequireOwner]
-        public async Task ReactionsEmbed(){
+        public async Task ReactionsEmbed()
+        {
             var getAlertsRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 1036799014508703794);
 
             var builder = new EmbedBuilder()

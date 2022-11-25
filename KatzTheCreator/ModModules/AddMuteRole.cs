@@ -33,7 +33,7 @@ namespace KatzTheCreator.ModModules{
                 }else if (userToBeMuted.Roles.Contains(mutedRole)){
                     await Context.Message.DeleteAsync();
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
-                    "***Uh oh! Something went wrong...***\n\nUser **{userToBeMuted.Username}** has already been muted.");
+                    $"***Uh oh! Something went wrong...***\n\nUser **{userToBeMuted.Username}** has already been muted.");
                     return;
                 }else{
                     await Context.Message.DeleteAsync();
@@ -43,7 +43,8 @@ namespace KatzTheCreator.ModModules{
                     if (userToBeMuted.Roles.Contains(repRole)){
                         await userToBeMuted.RemoveRoleAsync(repRole);
                     }
-                    var rUserHighestRole = rUser.Roles.OrderBy(r => r.Position).Last();
+                    var rUserHighestRole = rUser.Roles.MaxBy(r => r.Position);
+                    var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
 
                     try{
                         await userToBeMuted.SendMessageAsync($"You have been muted in **Bugs By Daylight** for **{muteReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n*Please note: All mutes from this server are indefinite.*\n*Any mute reversals are at the discretion of the issuer or the server directors.*");
@@ -56,9 +57,36 @@ namespace KatzTheCreator.ModModules{
                     await userToBeMuted.ModifyAsync(x => { x.Channel = null; });
                     var serverIconUrl = Context.Guild.IconUrl;
                     var serverName = Context.Guild.Name;
-                    
 
-                    var builder = new EmbedBuilder()
+                    if (removedDefaults.Count() != 0){
+                        var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;
+
+                        var builder = new EmbedBuilder()
+                        .WithColor(rUserColor)
+                        .WithThumbnailUrl(serverIconUrl)
+                        .WithCurrentTimestamp()
+                        .WithDescription($"{userToBeMuted.Mention} **has been muted in\n {serverName}.**\n\n **Reason:** {muteReason}.")
+                        .WithFooter(footer => {
+                            footer
+                            .WithText($"Muted by {rUserHighestRole} | {rUser}")
+                            .WithIconUrl(rUser.GetAvatarUrl());
+                        });
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
+
+                        // Sends Embed to Logging Channel
+                        var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel;
+                        var builderTwo = new EmbedBuilder()
+                        .WithColor(Color.DarkerGrey)
+                        .WithThumbnailUrl(userToBeMuted.GetAvatarUrl())
+                        .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                        .WithDescription($"**Muted:** {userToBeMuted} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
+                        .WithCurrentTimestamp();
+                        Embed embedTwo = builderTwo.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+                    }else{
+                        var builder = new EmbedBuilder()
                         .WithColor(Color.DarkPurple)
                         .WithThumbnailUrl(serverIconUrl)
                         .WithCurrentTimestamp()
@@ -68,19 +96,20 @@ namespace KatzTheCreator.ModModules{
                             .WithText($"Muted by {rUserHighestRole} | {rUser}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
-                    Embed embed = builder.Build();
-                    await ReplyAsync(embed: embed);
+                        Embed embed = builder.Build();
+                        await ReplyAsync(embed: embed);
 
-                    // Sends Embed to Logging Channel
-                    var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel;
-                    var builderTwo = new EmbedBuilder()
-                    .WithColor(Color.DarkerGrey)
-                    .WithThumbnailUrl(userToBeMuted.GetAvatarUrl())
-                    .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
-                    .WithDescription($"**Muted:** {userToBeMuted} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
-                    .WithCurrentTimestamp();
-                    Embed embedTwo = builderTwo.Build();
-                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                        // Sends Embed to Logging Channel
+                        var loggingChannel = Context.Guild.GetChannel(965699174358216744) as SocketTextChannel;
+                        var builderTwo = new EmbedBuilder()
+                        .WithColor(Color.DarkerGrey)
+                        .WithThumbnailUrl(userToBeMuted.GetAvatarUrl())
+                        .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                        .WithDescription($"**Muted:** {userToBeMuted} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
+                        .WithCurrentTimestamp();
+                        Embed embedTwo = builderTwo.Build();
+                        await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    }
                 }
 
             } else {
