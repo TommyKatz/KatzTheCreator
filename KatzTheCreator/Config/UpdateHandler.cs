@@ -427,6 +427,7 @@ namespace KatzTheCreator.Config{
                 await loggingChannel.SendMessageAsync(embed: embed);
 
             } else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
+                //var disconnectTime = DateTime.UtcNow;
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
@@ -443,7 +444,7 @@ namespace KatzTheCreator.Config{
                 var embed = embedBuilder.Build();
 
                 await loggingChannel.SendMessageAsync(embed: embed);
-
+                
             } else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
 
                 var embedBuilder = new EmbedBuilder()
@@ -461,33 +462,44 @@ namespace KatzTheCreator.Config{
                 var embed = embedBuilder.Build();
 
                 await loggingChannel.SendMessageAsync(embed: embed);
+
+                /*if (vStateBefore.VoiceChannel.Id == 1045071639295053854 && vStateAfter.VoiceChannel.CategoryId == 1045032443830353931){
+                    var rUser = user as SocketGuildUser;
+                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
+                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                    await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                }*/
             }
 
-            if (vStateAfter.VoiceChannel == createVcChannel){
-                var guildUser = user as SocketGuildUser;
+            /*if (vStateAfter.VoiceChannel == createVcChannel){
+                var rUser = user as SocketGuildUser;
                 var categoryId = createVcChannel.CategoryId;
                 var channelOverwrites = new OverwritePermissions(moveMembers: PermValue.Allow);
 
-                var newVC = await guildUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
+                var newVC = await rUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
 
-                await newVC.AddPermissionOverwriteAsync(guildUser, channelOverwrites);
+                await newVC.AddPermissionOverwriteAsync(rUser, channelOverwrites);
 
-                await guildUser.ModifyAsync(x => { x.Channel = newVC; });
+                await rUser.ModifyAsync(x => { x.Channel = newVC; });
 
             }
 
             if (vStateBefore.VoiceChannel != null){
                 if (vStateBefore.VoiceChannel != createVcChannel){
+                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
+                        var rUser = user as SocketGuildUser;
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    }
+
                     if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931 && vStateBefore.VoiceChannel.ConnectedUsers.Count == 0){
 
                         await vStateBefore.VoiceChannel.DeleteAsync();
                     }
                 }
-            }
-            
-
-            
-
+            } */
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
