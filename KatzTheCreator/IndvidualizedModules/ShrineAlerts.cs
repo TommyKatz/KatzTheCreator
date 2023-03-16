@@ -13,8 +13,7 @@ namespace KatzTheCreator.ModModules
 
             List<ulong> discordId = new List<ulong>();
             discordId.Add(135143527767080960); // katz
-            discordId.Add(968134907270402058); // witchdoctor
-            discordId.Add(527473869439762434); // harpy
+            //discordId.Add(527473869439762434); // harpy
             IEnumerable<ulong> allowedIds = discordId;
 
             if (!allowedIds.Contains(rUser.Id)){
@@ -35,10 +34,12 @@ namespace KatzTheCreator.ModModules
             }else if (pictureUrl.EndsWith(".png") || pictureUrl.EndsWith(".jpg")){
 
                 await Context.Message.DeleteAsync();
+                await announceChannel.SendMessageAsync("<@&1036799014508703794>");
+
                 var embedBuilder = new EmbedBuilder()
                     .WithTitle("New Shrine of Secrets !")
-                    .WithColor(Color.LightGrey)
-                    .AddField($"Newest Perks:", $"{string.Join(", ", content)}")
+                    .WithColor(Color.DarkGreen)
+                    .AddField($"Added Perks:", $"{string.Join(", ", content)}")
                     .WithImageUrl($"{pictureUrl}")
                     .WithCurrentTimestamp()
                     .WithFooter(footer => {
@@ -48,7 +49,7 @@ namespace KatzTheCreator.ModModules
                     });
                 Embed embed = embedBuilder.Build();
 
-                var botReply = await ReplyAsync(embed: embed);
+                await announceChannel.SendMessageAsync(embed: embed);
 
             } else {
                 await Context.Message.DeleteAsync();

@@ -12,6 +12,7 @@ namespace KatzTheCreator.ModModules{
             var rUserHighestRole = rUser.Roles.MaxBy(r => r.Position);
             var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
             var mutedRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 966087394040369182);
+            var serverName = Context.Guild.Name;
 
             if (userToBeUnmuted == null){
                 await Context.Message.DeleteAsync();
@@ -37,14 +38,13 @@ namespace KatzTheCreator.ModModules{
                 await Context.Message.DeleteAsync();
 
                 try{
-                    await userToBeUnmuted.SendMessageAsync($"You have been unmuted in **Bugs By Daylight** for **{unmuteReason}**.\n~\n Withdrawn by {rUserHighestRole}: {rUser.Mention}\n~\n*You may now type and rejoin voice channels again.*");
+                    await userToBeUnmuted.SendMessageAsync($"You have been unmuted in **{serverName}** for **{unmuteReason}**.\n~\n Withdrawn by {rUserHighestRole}: {rUser.Mention}\n~\n*You may now type and rejoin voice channels again.*");
                 }catch{
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                     $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the unmuted user.");
                 }
 
                 await userToBeUnmuted.RemoveRoleAsync(mutedRole);
-                var serverName = Context.Guild.Name;
                 var serverIconUrl = Context.Guild.IconUrl;
 
                 if (removedDefaults.Count() != 0){

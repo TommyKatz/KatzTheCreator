@@ -10,6 +10,7 @@ namespace KatzTheCreator.ModModules{
         [RequireUserPermission(GuildPermission.MuteMembers)]
         public async Task AddMuteRoleToUser(SocketGuildUser userToBeMuted = null, [Remainder] string muteReason = null){
             var rUser = Context.User as SocketGuildUser;
+            var serverName = Context.Guild.Name;
 
             if (userToBeMuted == null || userToBeMuted.IsBot){
                 await Context.Message.DeleteAsync();
@@ -47,7 +48,7 @@ namespace KatzTheCreator.ModModules{
                     var removedDefaults = rUser.Roles.Where(r => r.Color != Color.Default);
 
                     try{
-                        await userToBeMuted.SendMessageAsync($"You have been muted in **Bugs By Daylight** for **{muteReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n*Please note: All mutes from this server are indefinite.*\n*Any mute reversals are at the discretion of the issuer or the server directors.*");
+                        await userToBeMuted.SendMessageAsync($"You have been muted in **{serverName}** for **{muteReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n*Please note: All mutes from this server are indefinite.*\n*Any mute reversals are at the discretion of the issuer or the server directors.*");
                     }catch{
                         await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                         "***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the muted user.");
@@ -56,7 +57,7 @@ namespace KatzTheCreator.ModModules{
                     await userToBeMuted.AddRoleAsync(mutedRole);
                     await userToBeMuted.ModifyAsync(x => { x.Channel = null; });
                     var serverIconUrl = Context.Guild.IconUrl;
-                    var serverName = Context.Guild.Name;
+                    
 
                     if (removedDefaults.Count() != 0){
                         var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;

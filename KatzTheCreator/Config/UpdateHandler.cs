@@ -188,7 +188,8 @@ namespace KatzTheCreator.Config{
             ulong alertsRoleID = 1036799014508703794;
             var getSCGRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
-            var getAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1036799014508703794);
+            var getCAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1036799014508703794);
+            var getSAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1055221993462579220);
 
             switch (component.Data.CustomId){
 
@@ -233,18 +234,37 @@ namespace KatzTheCreator.Config{
 
                 case "Code Alerts":
 
-                    if (!rUser.Roles.Contains(getAlertsRole)){
+                    if (!rUser.Roles.Contains(getCAlertsRole)){
                         await rUser.AddRoleAsync(alertsRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i assigned you the {getAlertsRole.Mention} role.");
+                            .WithDescription($"{component.User.Mention}, i assigned you the {getCAlertsRole.Mention} role.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
                     } else {
                         await rUser.RemoveRoleAsync(alertsRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i removed your {getAlertsRole.Mention} role.");
+                            .WithDescription($"{component.User.Mention}, i removed your {getCAlertsRole.Mention} role.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+                    }
+                    break;
+
+                case "Shrine Alerts":
+
+                    if (!rUser.Roles.Contains(getSAlertsRole)){
+                        await rUser.AddRoleAsync(alertsRoleID);
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, i assigned you the {getSAlertsRole.Mention} role.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+                    } else {
+                        await rUser.RemoveRoleAsync(alertsRoleID);
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, i removed your {getSAlertsRole.Mention} role.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
                     }
@@ -255,6 +275,7 @@ namespace KatzTheCreator.Config{
         public async Task MessageOpsAsync(SocketMessage msg){
             if (string.IsNullOrEmpty(msg.Content)) return;
             if (msg.Author.IsBot || msg.Channel.GetChannelType() == ChannelType.DM) return;
+            if (msg.Channel.Id == 1046883404123222096) await msg.DeleteAsync();
 
             Random rnd = new Random();
             int number = rnd.Next(1, 101);
@@ -339,6 +360,7 @@ namespace KatzTheCreator.Config{
                 IEnumerable<ulong> allowedIds = channelId;
 
                 if (!allowedIds.Contains(channel.Id)) return;
+                if (msgAfter.Embeds.Any()) return;
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
@@ -396,9 +418,6 @@ namespace KatzTheCreator.Config{
             catch (Exception){
                 // ignore        
             }
-
-            
-
         }
 
         public async Task UserVoiceStateChanged(IUser user, SocketVoiceState vStateBefore, SocketVoiceState vStateAfter){
@@ -426,8 +445,15 @@ namespace KatzTheCreator.Config{
 
                 await loggingChannel.SendMessageAsync(embed: embed);
 
+                if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                    var rUser = user as SocketGuildUser;
+                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
+                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                    await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                }
+
             } else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
-                //var disconnectTime = DateTime.UtcNow;
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
@@ -444,6 +470,12 @@ namespace KatzTheCreator.Config{
                 var embed = embedBuilder.Build();
 
                 await loggingChannel.SendMessageAsync(embed: embed);
+
+                if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
+                    var rUser = user as SocketGuildUser;
+                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                    await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                }
                 
             } else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
 
@@ -463,43 +495,48 @@ namespace KatzTheCreator.Config{
 
                 await loggingChannel.SendMessageAsync(embed: embed);
 
-                /*if (vStateBefore.VoiceChannel.Id == 1045071639295053854 && vStateAfter.VoiceChannel.CategoryId == 1045032443830353931){
+                /*if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931)
+                {
                     var rUser = user as SocketGuildUser;
-                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow, sendMessages: PermValue.Allow);
+                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
                     var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
 
                     await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                } else if (vStateAfter.VoiceChannel.CategoryId != 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                    var rUser = user as SocketGuildUser;
+                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                    await cTChannel.RemovePermissionOverwriteAsync(rUser);
                 }*/
             }
 
             /*if (vStateAfter.VoiceChannel == createVcChannel){
                 var rUser = user as SocketGuildUser;
-                var categoryId = createVcChannel.CategoryId;
-                var channelOverwrites = new OverwritePermissions(moveMembers: PermValue.Allow);
+                var thisGuild = rUser.Guild as IGuild;
+                var auditCheckVCCreated = (await thisGuild.GetAuditLogsAsync(userId: 1022688631690891345, actionType: ActionType.ChannelCreated)).FirstOrDefault().CreatedAt.DateTime;
+                var timeResult = (DateTime.UtcNow - auditCheckVCCreated).TotalSeconds;
 
-                var newVC = await rUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
+                if (timeResult >= 6){
+                    var categoryId = createVcChannel.CategoryId;
 
-                await newVC.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    // viewChannel = Owner | connect = Authed | speak = Mod
+                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow, connect: PermValue.Allow);
 
-                await rUser.ModifyAsync(x => { x.Channel = newVC; });
+                    var newVC = await rUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
 
+                    await newVC.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+
+                    await rUser.ModifyAsync(x => { x.Channel = newVC; });
+                }else{
+                    await rUser.ModifyAsync(x => { x.Channel = null; });
+                }
             }
 
             if (vStateBefore.VoiceChannel != null){
-                if (vStateBefore.VoiceChannel != createVcChannel){
-                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
-                        var rUser = user as SocketGuildUser;
-                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
-
-                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
-                    }
-
-                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931 && vStateBefore.VoiceChannel.ConnectedUsers.Count == 0){
-
-                        await vStateBefore.VoiceChannel.DeleteAsync();
-                    }
+                if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931 && vStateBefore.VoiceChannel.ConnectedUsers.Count == 0 && vStateBefore.VoiceChannel != createVcChannel){
+                    await vStateBefore.VoiceChannel.DeleteAsync();
                 }
-            } */
+            }*/
+            
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){

@@ -9,6 +9,7 @@ namespace KatzTheCreator.ModModules{
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task RevokeUserAccess(SocketGuildUser userToBeRevoked = null, [Remainder] string revokeReason = null){
             var rUser = Context.User as SocketGuildUser;
+            var serverName = Context.Guild.Name;
 
             if (userToBeRevoked == null){
                 await Context.Message.DeleteAsync();
@@ -33,13 +34,12 @@ namespace KatzTheCreator.ModModules{
                     await Context.Message.DeleteAsync();
 
                     try{
-                        await userToBeRevoked.SendMessageAsync($"You been revoked access from **Bugs By Daylight** for **{revokeReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *You must be re-invited to join this server again.*");
+                        await userToBeRevoked.SendMessageAsync($"You been revoked access from **{serverName}** for **{revokeReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *You must be re-invited to join this server again.*");
                     }catch (Exception){
                         await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                         $"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the revoked user.");
                     }
 
-                    var serverName = Context.Guild.Name;
                     var serverIconUrl = Context.Guild.IconUrl;
 
                     await userToBeRevoked.KickAsync(revokeReason);

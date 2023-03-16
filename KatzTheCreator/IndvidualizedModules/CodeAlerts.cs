@@ -11,8 +11,7 @@ namespace KatzTheCreator.ModModules{
 
             List<ulong> discordId = new List<ulong>();
             discordId.Add(135143527767080960); // katz
-            discordId.Add(968134907270402058); // witchdoctor
-            discordId.Add(527473869439762434); // harpy
+            //discordId.Add(527473869439762434); // harpy
             IEnumerable<ulong> allowedIds = discordId;
 
             List<char> charType = new List<char>();
