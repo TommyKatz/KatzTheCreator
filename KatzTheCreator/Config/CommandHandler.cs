@@ -40,13 +40,19 @@ namespace KatzTheCreator.Config{
 
                 if (!result.IsSuccess) Console.Write(result.ErrorReason);
 
+                List<string> punctuation = new List<string>();
+                punctuation.Add("?");
+                punctuation.Add("!");
+                punctuation.Add(".");
+                IEnumerable<string> allowedPunctuations = punctuation;
+
                 if (result.Error.Equals(CommandError.UnmetPrecondition)){
                     await message.DeleteAsync();
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
                     $"***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
                 }
-                
-                if (result.Error.Equals(CommandError.UnknownCommand)){
+
+                if (result.Error.Equals(CommandError.UnknownCommand) && allowedPunctuations.Contains(message.Content) ){ // allows punct. to be used without deleting and throwing the user an error
                     await message.DeleteAsync();
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
                     "***Uh oh! Something went wrong...***\n\nThis is an invalid command; **Try again** or type ``?help`` to see the commands available");

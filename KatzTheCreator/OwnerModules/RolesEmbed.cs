@@ -13,6 +13,7 @@ namespace KatzTheCreator.ModModules{
             var getSCGRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
             var rKatz = Context.User as SocketGuildUser;
+            var serverName = Context.Guild.Name;
             var serverIconUrl = Context.Guild.IconUrl;
 
             var builder = new EmbedBuilder()
@@ -22,7 +23,7 @@ namespace KatzTheCreator.ModModules{
                 .WithDescription($"Click any button below to obtain the role(s) you prefer.\n\n~ {getSCGRole.Mention}\n~ {getKillerRole.Mention}")
                 .WithFooter(footer => {
                     footer
-                    .WithText($" Bugs By Daylight  |  Nea Bot  •  Created and Developed by katz#9999")
+                    .WithText($" {serverName}  |  Nea Bot  •  developed & maintained by katz#9999")
                     .WithIconUrl(rKatz.GetAvatarUrl());
                 });
             Embed embed = builder.Build();
