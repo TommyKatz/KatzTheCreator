@@ -53,7 +53,7 @@ namespace KatzTheCreator.ModModules{
                             .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
                             .WithFooter(footer => {
                                 footer
-                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
+                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser.Username}")
                                 .WithIconUrl(rUser.GetAvatarUrl());
                             });
                         Embed embed = builder.Build();
@@ -67,7 +67,7 @@ namespace KatzTheCreator.ModModules{
                             .WithDescription($"{userToBeRevoked.Mention} **has been revoked acesss from\n {serverName}.**\n\n **Reason:** {revokeReason}.")
                             .WithFooter(footer => {
                                 footer
-                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser}")
+                                .WithText($"Access Revoked by {rUserHighestRole} | {rUser.Username}")
                                 .WithIconUrl(rUser.GetAvatarUrl());
                             });
                         Embed embed = builder.Build();
@@ -78,7 +78,7 @@ namespace KatzTheCreator.ModModules{
                     var builderTwo = new EmbedBuilder()
                     .WithColor(Color.Gold)
                     .WithThumbnailUrl(userToBeRevoked.GetAvatarUrl())
-                    .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                    .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
                     .WithDescription($"**Revoked:** {userToBeRevoked.Mention} *(ID: {userToBeRevoked.Id})*\n**Reason:** {revokeReason}")
                     .WithCurrentTimestamp();
                     Embed embedTwo = builderTwo.Build();

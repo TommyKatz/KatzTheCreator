@@ -56,7 +56,7 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeUnmuted.Mention} **has been unmuted in\n {serverName}.**\n\n **Reason:** {unmuteReason}.")
                         .WithFooter(footer => {
                             footer
-                            .WithText($"Unmuted by {rUserHighestRole} | {rUser}")
+                            .WithText($"Unmuted by {rUserHighestRole} | {rUser.Username}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                     Embed embed = builder.Build();
@@ -69,7 +69,7 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeUnmuted.Mention} **has been unmuted in\n {serverName}.**\n\n **Reason:** {unmuteReason}.")
                         .WithFooter(footer => {
                             footer
-                            .WithText($"Unmuted by {rUserHighestRole} | {rUser}")
+                            .WithText($"Unmuted by {rUserHighestRole} | {rUser.Username}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                     Embed embed = builder.Build();
@@ -81,8 +81,8 @@ namespace KatzTheCreator.ModModules{
                 var builderTwo = new EmbedBuilder()
                     .WithColor(Color.LighterGrey)
                     .WithThumbnailUrl(userToBeUnmuted.GetAvatarUrl())
-                    .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
-                    .WithDescription($"**Unmuted:** {userToBeUnmuted} *(ID: {userToBeUnmuted.Id})*\n**Reason:** {unmuteReason}")
+                    .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                    .WithDescription($"**Unmuted:** {userToBeUnmuted.Username} *(ID: {userToBeUnmuted.Id})*\n**Reason:** {unmuteReason}")
                     .WithCurrentTimestamp();
                 Embed embedTwo = builderTwo.Build();
                 await loggingChannel.SendMessageAsync(embed: embedTwo);

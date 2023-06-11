@@ -7,7 +7,7 @@ namespace KatzTheCreator.UserModules{
         public async Task PingAsync(){
             EmbedBuilder builder = new EmbedBuilder();
             
-            builder.AddField("- NeaBot Command Help -", "• *created by @katz#9999* •")
+            builder.AddField("- NeaBot Command Help -", "• *created by suicidekatz* •")
                 .AddField("Commands (no permissions needed)",
                 "**help** | *Brings you here*\nusage: ``?help``" +
                 "\n**av** | *Enlarges the members pfp*\nusage: ``?av 135143527767080960``" +

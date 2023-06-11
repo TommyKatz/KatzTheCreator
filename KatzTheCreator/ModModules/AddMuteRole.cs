@@ -69,7 +69,7 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeMuted.Mention} **has been muted in\n {serverName}.**\n\n **Reason:** {muteReason}.")
                         .WithFooter(footer => {
                             footer
-                            .WithText($"Muted by {rUserHighestRole} | {rUser}")
+                            .WithText($"Muted by {rUserHighestRole} | {rUser.Username}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                         Embed embed = builder.Build();
@@ -80,8 +80,8 @@ namespace KatzTheCreator.ModModules{
                         var builderTwo = new EmbedBuilder()
                         .WithColor(Color.DarkerGrey)
                         .WithThumbnailUrl(userToBeMuted.GetAvatarUrl())
-                        .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
-                        .WithDescription($"**Muted:** {userToBeMuted} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
+                        .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                        .WithDescription($"**Muted:** {userToBeMuted.Username} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
                         .WithCurrentTimestamp();
                         Embed embedTwo = builderTwo.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);
@@ -94,7 +94,7 @@ namespace KatzTheCreator.ModModules{
                         .WithDescription($"{userToBeMuted.Mention} **has been muted in\n {serverName}.**\n\n **Reason:** {muteReason}.")
                         .WithFooter(footer => {
                             footer
-                            .WithText($"Muted by {rUserHighestRole} | {rUser}")
+                            .WithText($"Muted by {rUserHighestRole} | {rUser.Username}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                         Embed embed = builder.Build();
@@ -105,8 +105,8 @@ namespace KatzTheCreator.ModModules{
                         var builderTwo = new EmbedBuilder()
                         .WithColor(Color.DarkerGrey)
                         .WithThumbnailUrl(userToBeMuted.GetAvatarUrl())
-                        .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
-                        .WithDescription($"**Muted:** {userToBeMuted} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
+                        .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                        .WithDescription($"**Muted:** {userToBeMuted.Username} *(ID: {userToBeMuted.Id})*\n**Reason:** {muteReason}")
                         .WithCurrentTimestamp();
                         Embed embedTwo = builderTwo.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);

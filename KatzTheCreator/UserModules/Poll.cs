@@ -33,7 +33,7 @@ namespace KatzTheCreator.UserModules{
                     .WithCurrentTimestamp()
                     .WithFooter(footer =>{
                         footer
-                        .WithText($"asked by {rUser}")
+                        .WithText($"asked by {rUser.Username}")
                         .WithIconUrl(rUser.GetAvatarUrl());
                     });
                 Embed embed = embedBuilder.Build();

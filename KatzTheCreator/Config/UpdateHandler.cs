@@ -50,7 +50,7 @@ namespace KatzTheCreator.Config{
                         var builder = new EmbedBuilder()
                             .WithColor(Color.Gold)
                             .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
-                            .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                            .WithAuthor($"{timeOutAuthor.Username} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
                             .WithDescription($"**Timed Out:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason:** {timoutReason}")
                             .WithCurrentTimestamp();
                         Embed embedTwo = builder.Build();
@@ -63,7 +63,7 @@ namespace KatzTheCreator.Config{
                         var builder = new EmbedBuilder()
                             .WithColor(Color.Gold)
                             .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
-                            .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                            .WithAuthor($"{timeOutAuthor.Username} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
                             .WithDescription($"**Timed Out:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason:** No Reason Provided.")
                             .WithCurrentTimestamp();
                         Embed embedTwo = builder.Build();
@@ -81,8 +81,8 @@ namespace KatzTheCreator.Config{
                     var builder = new EmbedBuilder()
                         .WithColor(Color.Gold)
                         .WithThumbnailUrl(userStateAfter.GetAvatarUrl())
-                        .WithAuthor($"{timeOutAuthor} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
-                        .WithDescription($"**Timed Out Removed:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason cannot be provided.**")
+                        .WithAuthor($"{timeOutAuthor.Username} (ID: {timeOutAuthor.Id})", timeOutAuthor.GetAvatarUrl())
+                        .WithDescription($"**Timed Out Removed:** {userStateAfter.Mention} *(ID: {userStateAfter.Id})*\n**Reason:** reason input unavailable.")
                         .WithCurrentTimestamp();
                     Embed embedTwo = builder.Build();
                     await loggingChannel.SendMessageAsync(embed: embedTwo);
@@ -98,7 +98,7 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.Purple)
-                    .WithAuthor($"{userStateAfter}", userStateAfter.GetAvatarUrl())
+                    .WithAuthor($"{userStateAfter.Username}", userStateAfter.GetAvatarUrl())
                     .WithThumbnailUrl("https://i.imgur.com/i0xdsgG.png")
                     .WithDescription($"**Thank you for boosting {server} !**\n" +
                     $"**We are now at {boostCount} boosts.**\n◇────────────────────────────◇");
@@ -122,7 +122,7 @@ namespace KatzTheCreator.Config{
                         var builderTwo = new EmbedBuilder()
                             .WithColor(Color.DarkRed)
                             .WithThumbnailUrl(userBanned.GetAvatarUrl())
-                            .WithAuthor($"{banAuthor} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
+                            .WithAuthor($"{banAuthor.Username} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
                             .WithDescription($"**Banned:** {userBanned.Mention} *(ID: {userBanned.Id})*\n**Reason:** {banReason}")
                             .WithCurrentTimestamp()
                             .WithFooter(footer =>{
@@ -140,7 +140,7 @@ namespace KatzTheCreator.Config{
                         var builderTwo = new EmbedBuilder()
                             .WithColor(Color.DarkRed)
                             .WithThumbnailUrl(userBanned.GetAvatarUrl())
-                            .WithAuthor($"{banAuthor} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
+                            .WithAuthor($"{banAuthor.Username} (ID: {banAuthor.Id})", banAuthor.GetAvatarUrl())
                             .WithDescription($"**Banned:** {userBanned.Mention} *(ID: {userBanned.Id})*\n**Reason:** No Reason Provided")
                             .WithCurrentTimestamp()
                             .WithFooter(footer =>{
@@ -166,7 +166,7 @@ namespace KatzTheCreator.Config{
                     var builderTwo = new EmbedBuilder()
                     .WithColor(Color.DarkGreen)
                     .WithThumbnailUrl(userUnbanned.GetAvatarUrl())
-                    .WithAuthor($"{unbanAuthor} (ID: {unbanAuthor.Id})", unbanAuthor.GetAvatarUrl())
+                    .WithAuthor($"{unbanAuthor.Username} (ID: {unbanAuthor.Id})", unbanAuthor.GetAvatarUrl())
                     .WithDescription($"**Unbanned:** {userUnbanned.Mention} *(ID: {userUnbanned.Id})*\n**Reason:** No Reason Provided")
                     .WithCurrentTimestamp()
                     .WithFooter(footer =>{
@@ -185,11 +185,12 @@ namespace KatzTheCreator.Config{
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
-            ulong alertsRoleID = 1036799014508703794;
+            ulong usecRoleID = 1117540158112268308;
+            ulong bearRoleID = 1117540205856038962;
             var getSCGRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
-            var getCAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1036799014508703794);
-            var getSAlertsRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1055221993462579220);
+            var getUsecRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540158112268308);
+            var getBearRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540205856038962);
 
             switch (component.Data.CustomId){
 
@@ -232,50 +233,83 @@ namespace KatzTheCreator.Config{
                     }
                     break;
 
-                case "Code Alerts":
+                case "USEC":
 
-                    if (!rUser.Roles.Contains(getCAlertsRole)){
-                        await rUser.AddRoleAsync(alertsRoleID);
+                    if (!rUser.Roles.Contains(getBearRole)){
+                        if (!rUser.Roles.Contains(getUsecRole)){
+                            await rUser.AddRoleAsync(usecRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i assigned you the {getUsecRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+                        }else{
+                            await rUser.RemoveRoleAsync(usecRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i removed your {getUsecRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+                        }
+
+                    } else{
+
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i assigned you the {getCAlertsRole.Mention} role.");
-                        Embed embed = embedBuilder.Build();
-                        await component.RespondAsync(embed: embed, ephemeral: true);
-                    } else {
-                        await rUser.RemoveRoleAsync(alertsRoleID);
-                        var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i removed your {getCAlertsRole.Mention} role.");
+                            .WithDescription($"{component.User.Mention}, you may only have one of the roles at a time.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
                     }
                     break;
 
-                case "Shrine Alerts":
+                case "BEAR":
 
-                    if (!rUser.Roles.Contains(getSAlertsRole)){
-                        await rUser.AddRoleAsync(alertsRoleID);
-                        var embedBuilder = new EmbedBuilder()
-                            .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i assigned you the {getSAlertsRole.Mention} role.");
-                        Embed embed = embedBuilder.Build();
-                        await component.RespondAsync(embed: embed, ephemeral: true);
+                    if (!rUser.Roles.Contains(getUsecRole)){
+
+                        if (!rUser.Roles.Contains(getBearRole)){
+                            await rUser.AddRoleAsync(bearRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i assigned you the {getBearRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+                        }else{
+                            await rUser.RemoveRoleAsync(bearRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i removed your {getBearRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+                        }
+
                     } else {
-                        await rUser.RemoveRoleAsync(alertsRoleID);
+
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
-                            .WithDescription($"{component.User.Mention}, i removed your {getSAlertsRole.Mention} role.");
+                            .WithDescription($"{component.User.Mention}, you may only have one of the roles at a time.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
+
                     }
+                    
                     break;
             }
         }
 
         public async Task MessageOpsAsync(SocketMessage msg){
-            if (string.IsNullOrEmpty(msg.Content)) return;
+            if (string.IsNullOrEmpty(msg.Content) && msg.Attachments.Count == 0) return;
             if (msg.Author.IsBot || msg.Channel.GetChannelType() == ChannelType.DM) return;
             if (msg.Channel.Id == 1046883404123222096) await msg.DeleteAsync();
+
+            if (msg.Channel.Id == 1051719930384490536 && msg.Attachments.Count >= 1){
+                try{
+                    Emote heartyEmote = Emote.Parse("<:hearty:1100477170771566604>");
+                    await msg.AddReactionAsync(heartyEmote);
+                }
+                catch (Exception){
+                    //ignore
+                }
+            } 
 
             Random rnd = new Random();
             int number = rnd.Next(1, 101);
@@ -325,7 +359,7 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
-                    .WithAuthor($"{msg.Value.Author}", msg.Value.Author.GetAvatarUrl())
+                    .WithAuthor($"{msg.Value.Author.Username}", msg.Value.Author.GetAvatarUrl())
                     .WithDescription($"Message deleted in <#{channel.Id}>")
                     .AddField("Content", $"{msg.Value.Content}")
                     .AddField("Date", $"<t:{msg.Value.Timestamp.ToUnixTimeSeconds()}:F>")
@@ -364,7 +398,7 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
-                    .WithAuthor($"{msgAfter.Author}", msgAfter.Author.GetAvatarUrl())
+                    .WithAuthor($"{msgAfter.Author.Username}", msgAfter.Author.GetAvatarUrl())
                     .WithDescription($"Message edited in <#{channel.Id}>")
                     .AddField("Now", $"{msgAfter}")
                     .AddField("Previous", $"{msgBefore.Value.Content}")
@@ -430,8 +464,8 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user}", user.GetAvatarUrl())
-                    .WithDescription($"**{user}** joined voice channel: {vStateAfter.VoiceChannel}")
+                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                    .WithDescription($"**{user.Username}** joined voice channel: {vStateAfter.VoiceChannel}")
                     .AddField("Channel", $"{vStateAfter.VoiceChannel.Mention}")
                     .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateAfter.VoiceChannel.Id}\n```")
                     .WithCurrentTimestamp()
@@ -457,8 +491,8 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user}", user.GetAvatarUrl())
-                    .WithDescription($"**{user}** left voice channel: {vStateBefore.VoiceChannel}")
+                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                    .WithDescription($"**{user.Username}** left voice channel: {vStateBefore.VoiceChannel}")
                     .AddField("Channel", $"{vStateBefore.VoiceChannel.Mention}")
                     .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateBefore.VoiceChannel.Id}\n```")
                     .WithCurrentTimestamp()
@@ -481,8 +515,8 @@ namespace KatzTheCreator.Config{
 
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user}", user.GetAvatarUrl())
-                    .WithDescription($"**{user}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
+                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                    .WithDescription($"**{user.Username}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
                     .AddField("Channels", $"Before: {vStateBefore.VoiceChannel.Mention}\nAfter: {vStateAfter.VoiceChannel.Mention}")
                     .AddField("ID", $"```ini\nUser = {user.Id}\nNew = {vStateAfter.VoiceChannel.Id}\nOld = {vStateBefore.VoiceChannel.Id}\n```")
                     .WithCurrentTimestamp()
@@ -559,7 +593,7 @@ namespace KatzTheCreator.Config{
 
             var embedBuilder = new EmbedBuilder()
                 .WithColor(Color.DarkPurple)
-                .WithAuthor($"{userThatJoined}", userThatJoined.GetAvatarUrl())
+                .WithAuthor($"{userThatJoined.DisplayName}", userThatJoined.GetAvatarUrl())
                 .WithThumbnailUrl(serverIconUrl)
                 .WithTitle($"Welcome to {serverName} !")
                 .WithDescription($"- get your roles in <#{rolesChannel.Id}>\n- please read the rules <#{rulesChannel.Id}>\n")

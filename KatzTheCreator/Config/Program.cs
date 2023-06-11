@@ -17,9 +17,9 @@ namespace KatzTheCreator.Config{
                 LogLevel = LogSeverity.Debug,
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 100,
-                GatewayIntents = GatewayIntents.GuildMessages | GatewayIntents.GuildMembers | GatewayIntents.GuildBans | GatewayIntents.GuildPresences |
+                GatewayIntents = GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.GuildBans | GatewayIntents.GuildPresences |
                 GatewayIntents.GuildVoiceStates | GatewayIntents.GuildMessageReactions | GatewayIntents.DirectMessages | GatewayIntents.GuildScheduledEvents |
-                GatewayIntents.Guilds | GatewayIntents.GuildIntegrations
+                GatewayIntents.Guilds | GatewayIntents.GuildIntegrations | GatewayIntents.GuildEmojis | GatewayIntents.GuildInvites
                 
             };
 

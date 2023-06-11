@@ -39,7 +39,7 @@ namespace KatzTheCreator.ModModules{
                         .WithFooter(footer =>
                         {
                             footer
-                            .WithText($"Unbanned by {rUserHighestRole} | {rUser}")
+                            .WithText($"Unbanned by {rUserHighestRole} | {rUser.Username}")
                             .WithIconUrl(rUser.GetAvatarUrl());
                         });
                     Embed embed = builder.Build();
@@ -63,7 +63,7 @@ namespace KatzTheCreator.ModModules{
 
                 // Sends Embed to Logging Channel
                 var builderTwo = new EmbedBuilder()
-                .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
                 .WithColor(Color.DarkGreen)
                 .WithDescription($"**Unbanned:** <@{userToBeUnbanned}> *(ID: {userToBeUnbanned})*\n**Reason:** {unbanReason}")
                 .WithCurrentTimestamp();
