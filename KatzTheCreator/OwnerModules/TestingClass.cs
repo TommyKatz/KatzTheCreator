@@ -57,5 +57,40 @@ namespace KatzTheCreator.OwnerModules
             await ReplyAsync(embed: embed);
             
         }
+
+        [Command("21")]
+        [RequireOwner]
+        public async Task TwentyOneTheGame(){
+            await Context.Message.DeleteAsync();
+
+            List<string> cardType = new List<string>();
+            cardType.Add("One"); cardType.Add("Two"); // 0, 1
+            cardType.Add("Three"); cardType.Add("Four"); // 2, 3
+            cardType.Add("Five"); cardType.Add("Six"); // 4, 5
+            cardType.Add("Seven"); cardType.Add("Eight"); // 6, 7
+            cardType.Add("Nine"); cardType.Add("Ten"); // 8, 9
+            cardType.Add("Jack"); cardType.Add("Queen"); // 10, 11
+            cardType.Add("King"); cardType.Add("Ace"); // 12, 13
+            IEnumerable<string> cardDeck = cardType;
+
+
+            Random rnd = new Random();
+            var cardNumShuffle = cardDeck.OrderBy(c => rnd.Next()).ToList();
+            Console.WriteLine($"{String.Join(", ", cardNumShuffle)}");
+
+            var pcOne = cardNumShuffle.ElementAt(0);
+            var pcTwo = cardNumShuffle.ElementAt(1);
+
+            var dcOne = cardNumShuffle.ElementAt(2);
+            var dcTwo = cardNumShuffle.ElementAt(3);
+
+            // prompt the player to hit or keep their current hand
+            var builderTwo = new ComponentBuilder()
+                .WithButton("Hit", "Hit", ButtonStyle.Success)
+                .WithButton("Keep", "Keep", ButtonStyle.Danger);
+
+            await ReplyAsync($"Your First Card: {pcOne} | Your Second Card: {pcTwo}\nThe Dealer's Second Card: {dcTwo}", components: builderTwo.Build());
+
+        }
     }
 }

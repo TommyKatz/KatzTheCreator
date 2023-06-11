@@ -52,7 +52,7 @@ namespace KatzTheCreator.Config{
                     $"***Uh oh! Something went wrong...***\n\nYou do not have permission to use this.");
                 }
 
-                if (result.Error.Equals(CommandError.UnknownCommand) && allowedPunctuations.Contains(message.Content) ){ // allows punct. to be used without deleting and throwing the user an error
+                if (result.Error.Equals(CommandError.UnknownCommand) && allowedPunctuations.Contains(message.Content)){ // allows punct. to be used without deleting and throwing the user an error
                     await message.DeleteAsync();
                     await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
                     "***Uh oh! Something went wrong...***\n\nThis is an invalid command; **Try again** or type ``?help`` to see the commands available");
@@ -71,7 +71,7 @@ namespace KatzTheCreator.Config{
 
                 if (result.Error.Equals(CommandError.Exception)){
                     await message.DeleteAsync();
-                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" + 
+                    await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                     $"***Uh oh! Something went wrong...***\n\nUnable to perform this action; {result.ErrorReason}");
                 }
             } 

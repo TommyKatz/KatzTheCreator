@@ -11,7 +11,7 @@ namespace KatzTheCreator.UserModules{
             if (userToBeIDed == null){
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
-                    .WithAuthor($"{rUser}")
+                    .WithAuthor($"{rUser.Username}")
                     .WithTitle("User Information")
                     .WithThumbnailUrl(rUser.GetAvatarUrl())
                     .AddField("ID", $"{rUser.Id}")
@@ -27,7 +27,7 @@ namespace KatzTheCreator.UserModules{
             }else{
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
-                    .WithAuthor($"{userToBeIDed}")
+                    .WithAuthor($"{userToBeIDed.Username}")
                     .WithThumbnailUrl(userToBeIDed.GetAvatarUrl())
                     .AddField("ID", $"{userToBeIDed.Id}")
                     .AddField("Account Created On", $"{userToBeIDed.CreatedAt.UtcDateTime.ToString("D")}")

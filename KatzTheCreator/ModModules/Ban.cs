@@ -39,7 +39,7 @@ namespace KatzTheCreator.ModModules{
                     $"***Uh oh! Something went wrong...***\n\nUser **<@{userToBeBanned}>** is already banned.");
                     return;
                 }else{
-                    await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser}: {banReason}");
+                    await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser.Username}: {banReason}");
                     await Context.Message.DeleteAsync();
 
                     if (removedDefaults.Count() != 0){
@@ -51,7 +51,7 @@ namespace KatzTheCreator.ModModules{
                             .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
                             .WithFooter(footer => {
                                 footer
-                                .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                .WithText($"Banned by {rUserHighestRole} | {rUser.Username}")
                                 .WithIconUrl(rUser.GetAvatarUrl());
                                 });
                         Embed embed = builder.Build();
@@ -65,7 +65,7 @@ namespace KatzTheCreator.ModModules{
                             .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
                             .WithFooter(footer => {
                                 footer
-                                .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                .WithText($"Banned by {rUserHighestRole} | {rUser.Username}")
                                 .WithIconUrl(rUser.GetAvatarUrl());
                             });
                         Embed embed = builder.Build();
@@ -75,7 +75,7 @@ namespace KatzTheCreator.ModModules{
                     // Sends Embed to Logging Channel
                     var builderTwo = new EmbedBuilder()
                     .WithColor(Color.DarkRed)
-                    .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                    .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
                     .WithDescription($"**Banned:** <@{userToBeBanned}> *(ID: {userToBeBanned})*\n**Reason:** {banReason}")
                     .WithCurrentTimestamp();
                     Embed embedTwo = builderTwo.Build();
@@ -112,7 +112,7 @@ namespace KatzTheCreator.ModModules{
                                 .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
                                 .WithFooter(footer => {
                                     footer
-                                    .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                    .WithText($"Banned by {rUserHighestRole} | {rUser.Username}")
                                     .WithIconUrl(rUser.GetAvatarUrl());
                                 });
                             Embed embed = builder.Build();
@@ -125,7 +125,7 @@ namespace KatzTheCreator.ModModules{
                                 .WithDescription($"<@{userToBeBanned}> **has been banned from\n {serverName}.**\n\n **Reason:** {banReason}.")
                                 .WithFooter(footer => {
                                     footer
-                                    .WithText($"Banned by {rUserHighestRole} | {rUser}")
+                                    .WithText($"Banned by {rUserHighestRole} | {rUser.Username}")
                                     .WithIconUrl(rUser.GetAvatarUrl());
                                 });
                             Embed embed = builder.Build();
@@ -136,7 +136,7 @@ namespace KatzTheCreator.ModModules{
                         var builderTwo = new EmbedBuilder()
                         .WithColor(Color.DarkRed)
                         .WithThumbnailUrl(Context.Guild.GetUser(userToBeBanned).GetAvatarUrl())
-                        .WithAuthor($"{rUser} (ID: {rUser.Id})", rUser.GetAvatarUrl())
+                        .WithAuthor($"{rUser.Username} (ID: {rUser.Id})", rUser.GetAvatarUrl())
                         .WithDescription($"**Banned:** <@{userToBeBanned}> *(ID: {userToBeBanned})*\n**Reason:** {banReason}")
                         .WithCurrentTimestamp();
                         Embed embedTwo = builderTwo.Build();

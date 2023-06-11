@@ -15,7 +15,7 @@ namespace KatzTheCreator.UserModules{
                     .WithColor(Color.DarkPurple)
                     .WithTitle("Avatar")
                     .WithImageUrl(rUser.GetAvatarUrl(ImageFormat.Auto, 320))
-                    .WithFooter($"Requested by {rUser}");
+                    .WithFooter($"Requested by {rUser.Username}");
 
                 Embed embed = embedBuilder.Build();
                 await ReplyAsync(embed: embed);
@@ -27,7 +27,7 @@ namespace KatzTheCreator.UserModules{
                     .WithColor(Color.DarkPurple)
                     .WithTitle("Avatar")
                     .WithImageUrl(userToBeAved.GetAvatarUrl(ImageFormat.Auto, 320))
-                    .WithFooter($"Requested by {rUser}");
+                    .WithFooter($"Requested by {rUser.Username}");
 
                 Embed embed = embedBuilder.Build();
                 await ReplyAsync(embed: embed);
