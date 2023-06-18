@@ -15,7 +15,6 @@ namespace KatzTheCreator.OwnerModules
 
             if (string.IsNullOrEmpty(pictureLink) || !pictureLink.StartsWith("https://"))
             {
-                await Context.Message.DeleteAsync();
                 await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
                 "***Uh oh! Something went wrong...***\n\nLink is null or incorrect format; **Copy image address**.");
                 return;
