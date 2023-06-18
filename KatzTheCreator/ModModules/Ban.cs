@@ -100,7 +100,7 @@ namespace KatzTheCreator.ModModules{
                             await rUser.SendMessageAsync($"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the banned user.");
                         }
 
-                        await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser}: {banReason}");
+                        await Context.Guild.AddBanAsync(userToBeBanned, 1, $"{rUser.Username}: {banReason}");
 
                         if (removedDefaults.Count() != 0){
                             var rUserColor = removedDefaults.MaxBy(r => r.Position).Color;

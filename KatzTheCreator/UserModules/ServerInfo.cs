@@ -1,10 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 
 namespace KatzTheCreator.UserModules
 {
-    public class ServerInfo : ModuleBase<SocketCommandContext>{
-        [Command("serverinfo")]
+    public class ServerInfo : InteractionModuleBase<SocketInteractionContext>{
+        [SlashCommand("serverinfo", "provides info about the server")]
         public async Task PingAsync(){
             var boostCount = Context.Guild.PremiumSubscriptionCount;
         
@@ -20,11 +21,10 @@ namespace KatzTheCreator.UserModules
                     .AddField("Server Booster Count", $"{boostCount} boosts")
                     .AddField("Server Level", $"{Context.Guild.PremiumTier}, {14 - boostCount} boosts away from Tier3 !")
                     .AddField("Role Count", $"{Context.Guild.Roles.Count}")
-                    .WithFooter($"For more information, contact {Context.Guild.Owner}")
+                    .WithFooter($"For more information, contact {Context.Guild.Owner.Username}")
                     .WithCurrentTimestamp();
 
-                await ReplyAsync("", false, builder.Build());
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: builder.Build());
 
             }else if (boostCount == 14){
                 EmbedBuilder builder = new EmbedBuilder();
@@ -38,12 +38,13 @@ namespace KatzTheCreator.UserModules
                     .AddField("Server Booster Count", $"{boostCount} boosts")
                     .AddField("Server Level", $"{Context.Guild.PremiumTier}, no more boosts needed but are still greatly appreciated !")
                     .AddField("Role Count", $"{Context.Guild.Roles.Count}")
-                    .WithFooter($"For more information, contact {Context.Guild.Owner}")
+                    .WithFooter($"For more information, contact {Context.Guild.Owner.Username}")
                     .WithCurrentTimestamp();
 
-                await ReplyAsync("", false, builder.Build());
-                await Context.Message.DeleteAsync();
-            }else{
+                await RespondAsync(embed: builder.Build());
+
+            }
+            else{
                 EmbedBuilder builder = new EmbedBuilder();
 
                 builder.WithTitle($"{Context.Guild.Name}")
@@ -55,11 +56,10 @@ namespace KatzTheCreator.UserModules
                     .AddField("Server Booster Count", $"{boostCount} boosts")
                     .AddField("Server Level", $"{Context.Guild.PremiumTier}, {boostCount - 14} boosts over required amount for Tier3 !")
                     .AddField("Role Count", $"{Context.Guild.Roles.Count}")
-                    .WithFooter($"For more information, contact {Context.Guild.Owner}")
+                    .WithFooter($"For more information, contact {Context.Guild.Owner.Username}")
                     .WithCurrentTimestamp();
 
-                await ReplyAsync("", false, builder.Build());
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: builder.Build());
             }
         }
     }

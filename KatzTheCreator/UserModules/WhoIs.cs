@@ -1,14 +1,16 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace KatzTheCreator.UserModules{
-    public class WhoIs : ModuleBase<SocketCommandContext>{
-        [Command("whois")]
-        public async Task WhoIsUser(SocketGuildUser userToBeIDed =  null){
+    public class WhoIs : InteractionModuleBase<SocketInteractionContext>
+    {
+        [SlashCommand("whois", "provides info on user")]
+        public async Task WhoIsUser(SocketGuildUser user =  null){
             var rUser = Context.User as SocketGuildUser;
 
-            if (userToBeIDed == null){
+            if (user == null){
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
                     .WithAuthor($"{rUser.Username}")
@@ -21,23 +23,21 @@ namespace KatzTheCreator.UserModules{
                     .AddField("Status", $"{rUser.Status}");
 
                 Embed embed = embedBuilder.Build();
-                await ReplyAsync(embed: embed);
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: embed);
 
             }else{
                 var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkPurple)
-                    .WithAuthor($"{userToBeIDed.Username}")
-                    .WithThumbnailUrl(userToBeIDed.GetAvatarUrl())
-                    .AddField("ID", $"{userToBeIDed.Id}")
-                    .AddField("Account Created On", $"{userToBeIDed.CreatedAt.UtcDateTime.ToString("D")}")
-                    .AddField("Joined Server On", $"{userToBeIDed.JoinedAt.Value.UtcDateTime.ToString("D")} ({((int)(DateTime.UtcNow - userToBeIDed.JoinedAt.Value.UtcDateTime).TotalDays)} days)")
-                    .AddField("Server Roles", $"{string.Join(", ", userToBeIDed.Roles)}")
-                    .AddField("Status", $"{userToBeIDed.Status}");
+                    .WithAuthor($"{user.Username}")
+                    .WithThumbnailUrl(user.GetAvatarUrl())
+                    .AddField("ID", $"{user.Id}")
+                    .AddField("Account Created On", $"{user.CreatedAt.UtcDateTime.ToString("D")}")
+                    .AddField("Joined Server On", $"{user.JoinedAt.Value.UtcDateTime.ToString("D")} ({((int)(DateTime.UtcNow - user.JoinedAt.Value.UtcDateTime).TotalDays)} days)")
+                    .AddField("Server Roles", $"{string.Join(", ", user.Roles)}")
+                    .AddField("Status", $"{user.Status}");
 
                 Embed embed = embedBuilder.Build();
-                await ReplyAsync(embed: embed);
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: embed);
             }
         }
     }

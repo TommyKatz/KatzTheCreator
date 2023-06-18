@@ -1,19 +1,18 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using RequireUserPermissionAttribute = Discord.Commands.RequireUserPermissionAttribute;
 
-namespace KatzTheCreator.UserModules{
-    public class Poll : ModuleBase<SocketCommandContext>{
-        [Command("poll")]
+namespace KatzTheCreator.UserModules{/*
+    public class Poll : InteractionModuleBase<SocketInteractionContext>{
+        [SlashCommand("poll", "start a poll for users to vote")]
         [RequireUserPermission(GuildPermission.CreateInstantInvite)]
         public async Task PollVoting([Remainder] string question = null){
             var rUser = Context.User as SocketGuildUser;
 
             if (string.IsNullOrEmpty(question)){
-                await Context.Message.DeleteAsync();
-                await rUser.SendMessageAsync("---------------------------------------------------------------------\n" +
-                "***Uh oh! Something went wrong...***\n\nYou didn't ask a question; A question must be provided to use this.");
+                await RespondAsync("You didn't ask a question; A question must be provided to use this.", ephemeral: true); ////////
                 return;
             } else{
                 Emote agreeEmote = Emote.Parse("<:agree:1015291095967600761>");
@@ -24,7 +23,6 @@ namespace KatzTheCreator.UserModules{
                 emoteToAdd.Add(disagreeEmote);
                 IEnumerable<Emote> reactionsToAdd = emoteToAdd;
 
-                await Context.Message.DeleteAsync();
                 var embedBuilder = new EmbedBuilder()
                     .WithTitle("Poll Started: react below to submit your stance !")
                     .WithColor(Color.DarkPurple)
@@ -37,9 +35,11 @@ namespace KatzTheCreator.UserModules{
                         .WithIconUrl(rUser.GetAvatarUrl());
                     });
                 Embed embed = embedBuilder.Build();
-                var botReply = await ReplyAsync(embed: embed);
-                await botReply.AddReactionsAsync(reactionsToAdd);
+                await RespondAsync(embed: embed);
+
+                // find a way to add reactions to this response
+                
             }
         }
-    }
+    }*/
 }

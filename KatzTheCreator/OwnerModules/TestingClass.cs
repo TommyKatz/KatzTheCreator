@@ -1,14 +1,15 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace KatzTheCreator.OwnerModules
 {
-    public class TestingClass : ModuleBase<SocketCommandContext>
-    {
-        [Command("test")]
-        [RequireOwner]
+    /*public class TestingClass : InteractionModuleBase<SocketInteractionContext>{
+        [SlashCommand("test", "returns the color of a user")]
+        [Discord.Interactions.RequireOwner]
         public async Task GrabbingUserRoleColor(SocketGuildUser user)
         {
 
@@ -19,12 +20,12 @@ namespace KatzTheCreator.OwnerModules
             var userHighestRoleColor = filterOutDefault.MaxBy(r => r.Position).Color;
 
             // returns the hex code for it
-            await ReplyAsync($"This user's color is {userHighestRoleColor}");
+            await RespondAsync($"This user's color is {userHighestRoleColor}");
 
         }
 
-        [Command("test2")]
-        [RequireOwner]
+        [SlashCommand("test2", "trying to download a user's pfp")]
+        [Discord.Interactions.RequireOwner]
         public async Task UploadEmoji(SocketGuildUser user)
         {
             var grabAvatarURL = user.GetAvatarUrl();
@@ -36,10 +37,9 @@ namespace KatzTheCreator.OwnerModules
             //await Context.Guild.CreateEmoteAsync("emojiName", attachment);        
         }
 
-        [Command("test3")]
-        [RequireOwner]
+        [SlashCommand("test3", "pvc embed")]
+        [Discord.Interactions.RequireOwner]
         public async Task TestingClassEx(){
-            await Context.Message.DeleteAsync();
 
             var embedColor = Context.Guild.Roles.FirstOrDefault(x => x.Id == 988179216791113780).Color;
 
@@ -54,14 +54,13 @@ namespace KatzTheCreator.OwnerModules
              });
             var embed = builder.Build();
 
-            await ReplyAsync(embed: embed);
+            await RespondAsync(embed: embed);
             
         }
 
-        [Command("21")]
-        [RequireOwner]
+        [SlashCommand("21", "play 21 the game")]
+        [Discord.Interactions.RequireOwner]
         public async Task TwentyOneTheGame(){
-            await Context.Message.DeleteAsync();
 
             List<string> cardType = new List<string>();
             cardType.Add("One"); cardType.Add("Two"); // 0, 1
@@ -89,8 +88,11 @@ namespace KatzTheCreator.OwnerModules
                 .WithButton("Hit", "Hit", ButtonStyle.Success)
                 .WithButton("Keep", "Keep", ButtonStyle.Danger);
 
-            await ReplyAsync($"Your First Card: {pcOne} | Your Second Card: {pcTwo}\nThe Dealer's Second Card: {dcTwo}", components: builderTwo.Build());
+            await RespondAsync($"Your First Card: {pcOne} | Your Second Card: {pcTwo}\nThe Dealer's Second Card: {dcTwo}", components: builderTwo.Build());
 
         }
-    }
+
+
+
+    }*/
 }
