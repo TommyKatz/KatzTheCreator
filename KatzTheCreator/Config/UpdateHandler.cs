@@ -56,7 +56,7 @@ namespace KatzTheCreator.Config{
                         Embed embedTwo = builder.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);
                     } catch (Exception){
-                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                     }
                 } else{
                     try{
@@ -69,7 +69,7 @@ namespace KatzTheCreator.Config{
                         Embed embedTwo = builder.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);
                     }catch (Exception){
-                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                        await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                     }
                 }
             }
@@ -87,7 +87,7 @@ namespace KatzTheCreator.Config{
                     Embed embedTwo = builder.Build();
                     await loggingChannel.SendMessageAsync(embed: embedTwo);
                 }catch (Exception){
-                    await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    await loggingChannel.SendMessageAsync($"{timeOutAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                 }
             }
 
@@ -132,7 +132,7 @@ namespace KatzTheCreator.Config{
                         Embed embedTwo = builderTwo.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);
                     } catch (Exception){
-                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                     }
 
                 }else{
@@ -150,7 +150,7 @@ namespace KatzTheCreator.Config{
                         Embed embedTwo = builderTwo.Build();
                         await loggingChannel.SendMessageAsync(embed: embedTwo);
                     } catch (Exception){
-                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                        await loggingChannel.SendMessageAsync($"{banAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                     }
                 }
             }
@@ -176,7 +176,7 @@ namespace KatzTheCreator.Config{
                     Embed embedTwo = builderTwo.Build();
                     await loggingChannel.SendMessageAsync(embed: embedTwo);
                 } catch{
-                    await loggingChannel.SendMessageAsync($"{unbanAuthor.Mention}, an exception has been caught, please contact @katz#9999.");
+                    await loggingChannel.SendMessageAsync($"{unbanAuthor.Mention}, an exception has been caught, please contact suicidekatz.");
                 }
             }
         }

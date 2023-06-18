@@ -1,37 +1,36 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace KatzTheCreator.UserModules{
-    public class AV : ModuleBase<SocketCommandContext>{
-        [Command("av")]
-        public async Task AVUser (SocketGuildUser userToBeAved = null){
+    public class AV : InteractionModuleBase<SocketInteractionContext>{
+        [SlashCommand("av", "grabs and uploads pfps")]
+        public async Task AVUser (SocketGuildUser user = null){
             var rUser = Context.User as SocketGuildUser;
 
-            if (userToBeAved == null){
+            if (user == null){
 
                 var embedBuilder = new EmbedBuilder()
-                    .WithAuthor(rUser)
+                    .WithAuthor(rUser.Username)
                     .WithColor(Color.DarkPurple)
                     .WithTitle("Avatar")
                     .WithImageUrl(rUser.GetAvatarUrl(ImageFormat.Auto, 320))
                     .WithFooter($"Requested by {rUser.Username}");
 
                 Embed embed = embedBuilder.Build();
-                await ReplyAsync(embed: embed);
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: embed);
 
             }else{
                 var embedBuilder = new EmbedBuilder()
-                    .WithAuthor(userToBeAved)
+                    .WithAuthor(user.Username)
                     .WithColor(Color.DarkPurple)
                     .WithTitle("Avatar")
-                    .WithImageUrl(userToBeAved.GetAvatarUrl(ImageFormat.Auto, 320))
+                    .WithImageUrl(user.GetAvatarUrl(ImageFormat.Auto, 320))
                     .WithFooter($"Requested by {rUser.Username}");
 
                 Embed embed = embedBuilder.Build();
-                await ReplyAsync(embed: embed);
-                await Context.Message.DeleteAsync();
+                await RespondAsync(embed: embed);
             }
 
             

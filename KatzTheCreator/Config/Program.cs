@@ -1,7 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace KatzTheCreator.Config{
     public class Program{
@@ -10,6 +12,7 @@ namespace KatzTheCreator.Config{
         private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
+        private InteractionService _interaction;
         private SocketMessageComponent _buttons;
         public async Task RunBotAsync(){
 
@@ -27,36 +30,39 @@ namespace KatzTheCreator.Config{
 
             _commands = new CommandService();
 
+            _interaction = new InteractionService(_client);
+
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
+                .AddSingleton(_interaction)
+                .AddSingleton<InteractionHandler>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<UpdateHandler>()
                 .BuildServiceProvider();
 
-            _client.Log += _client_Log;
-
             string token = File.ReadAllText("token.txt");
+
+            await _services.GetRequiredService<CommandHandler>().RegisterCommandAsync();
+            await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
+            await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
+
+            await _client.SetGameAsync("with your heart");
+
+            _client.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
+            _interaction.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
+
+            _client.Ready += async () =>{
+                Console.WriteLine($"Connected as -> [{_client.CurrentUser}]");
+                await _interaction.RegisterCommandsGloballyAsync(deleteMissing: true);
+                Console.WriteLine("Commands have been registred");
+
+            };
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
-            await _services.GetRequiredService<CommandHandler>().RegisterCommandAsync();
-            await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
-
-            await _client.SetGameAsync("with your heart");
-
             await Task.Delay(-1);
-        }
-
-        private Task _client_Log(LogMessage msg){
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
-
-        private Task ReadyAsync(){
-            Console.WriteLine($"Connected as -> [{_client.CurrentUser}]");
-            return Task.CompletedTask;
         }
     }
 }
