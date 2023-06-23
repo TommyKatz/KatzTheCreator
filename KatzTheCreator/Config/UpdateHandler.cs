@@ -3,6 +3,9 @@ using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
 using System.Reflection;
+using System.Threading;
+using System.Runtime.InteropServices.ObjectiveC;
+using System.Timers;
 
 namespace KatzTheCreator.Config{
     public class UpdateHandler{
@@ -546,13 +549,28 @@ namespace KatzTheCreator.Config{
             /*if (vStateAfter.VoiceChannel == createVcChannel){
                 var rUser = user as SocketGuildUser;
                 var thisGuild = rUser.Guild as IGuild;
-                var auditCheckVCCreated = (await thisGuild.GetAuditLogsAsync(userId: 1022688631690891345, actionType: ActionType.ChannelCreated)).FirstOrDefault().CreatedAt.DateTime;
-                var timeResult = (DateTime.UtcNow - auditCheckVCCreated).TotalSeconds;
+                try{
+                    var auditCheckVCCreated = (await thisGuild.GetAuditLogsAsync(userId: 1022688631690891345, actionType: ActionType.ChannelCreated)).FirstOrDefault().CreatedAt.DateTime;
+                    var timeResult = (DateTime.UtcNow - auditCheckVCCreated).TotalSeconds;
+                    if (timeResult >= 6){
+                        var categoryId = createVcChannel.CategoryId;
 
-                if (timeResult >= 6){
+                        // viewChannel = Owner | connect = Authed | speak = Mod
+                        var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow, connect: PermValue.Allow);
+
+                        var newVC = await rUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
+
+                        await newVC.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+
+                        await rUser.ModifyAsync(x => { x.Channel = newVC; });
+                    }
+                    else
+                    {
+                        await rUser.ModifyAsync(x => { x.Channel = null; });
+                    }
+                }catch (Exception noAuditLogging){
                     var categoryId = createVcChannel.CategoryId;
 
-                    // viewChannel = Owner | connect = Authed | speak = Mod
                     var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow, connect: PermValue.Allow);
 
                     var newVC = await rUser.Guild.CreateVoiceChannelAsync($"{user.Username}'s VC", tcp => tcp.CategoryId = categoryId);
@@ -560,8 +578,6 @@ namespace KatzTheCreator.Config{
                     await newVC.AddPermissionOverwriteAsync(rUser, channelOverwrites);
 
                     await rUser.ModifyAsync(x => { x.Channel = newVC; });
-                }else{
-                    await rUser.ModifyAsync(x => { x.Channel = null; });
                 }
             }
 
@@ -571,6 +587,47 @@ namespace KatzTheCreator.Config{
                 }
             }*/
             
+        }
+
+        public static class MessageTimer{
+            private static System.Timers.Timer messageTimer;
+            private static SocketCommandContext _Context;
+
+            public static void StartTimer(SocketCommandContext context){
+                _Context = context;
+
+                messageTimer = new System.Timers.Timer(86400000);
+                messageTimer.Elapsed += OnTimerElapsed;
+                messageTimer.AutoReset = true;
+                messageTimer.Enabled = true;
+            }
+
+            public static async void OnTimerElapsed(object source, ElapsedEventArgs e){
+                List<string> responses = new List<string>();
+                responses.Add("Wanna hear a joke?");
+                responses.Add("Hey...");
+                responses.Add("I gotta good one for you...");
+                responses.Add("Howdy... can i tell you a joke?");
+                responses.Add("Let me tell you something silly...");
+                responses.Add("<@153643067516125185> wanted me to tell y'all this...");
+                responses.Add("<@135143527767080960> came up with this one...");
+                IEnumerable<string> response = responses;
+                Random rnd = new Random();
+                var randomizeReponses = responses.OrderBy(u => rnd.Next(0, responses.Count()));
+                var selectedResponse = randomizeReponses.FirstOrDefault();
+
+                string[] allLines = File.ReadAllLines("jokes365.txt");
+                Random rndTwo = new Random();
+                await _Context.Channel.SendMessageAsync($"**{selectedResponse}**\n{allLines[rndTwo.Next(allLines.Length)]}");
+            }
+
+            public class StartTimedEmbed : ModuleBase<SocketCommandContext>{
+                [Command("starttimer")]
+                public async Task StartMessageTimer(){
+                    await Context.Message.DeleteAsync();
+                    MessageTimer.StartTimer(Context);
+                }
+            }
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
