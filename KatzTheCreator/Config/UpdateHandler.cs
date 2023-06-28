@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Runtime.InteropServices.ObjectiveC;
 using System.Timers;
+using System.Threading.Channels;
 
 namespace KatzTheCreator.Config{
     public class UpdateHandler{
@@ -32,6 +33,7 @@ namespace KatzTheCreator.Config{
             _client.MessageDeleted += MessageDeletedLog;
             _client.MessageUpdated += MessageEditedLog;
             _client.MessagesBulkDeleted += MessageBulkDeleteLog;
+            _client.InviteCreated += InviteTracker;
         }
 
         public async Task RegisterCommandAsync(){
@@ -588,7 +590,47 @@ namespace KatzTheCreator.Config{
             
         }
 
-        public static class MessageTimer{
+        public async Task InviteTracker(SocketInvite guildInvite){
+            var trackingChannel = _client.GetChannel(1122241848254148620) as SocketTextChannel;
+            var inviter = guildInvite.Inviter;
+            var bot = _client.CurrentUser;
+
+            if (guildInvite.ExpiresAt != null){
+                var embedBuilder = new EmbedBuilder()
+               .WithColor(Color.DarkPurple)
+               .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
+               .WithTitle("Invite Created")
+               .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+               .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = {guildInvite.ExpiresAt.Value.DateTime}\nChannel = {guildInvite.ChannelId}\n```")
+               .WithCurrentTimestamp()
+               .WithFooter(footer => {
+                   footer
+                   .WithIconUrl(bot.GetAvatarUrl())
+                   .WithText($"{bot}");
+               });
+
+                Embed embed = embedBuilder.Build();
+                await trackingChannel.SendMessageAsync(embed: embed);
+            }else{
+                var embedBuilder = new EmbedBuilder()
+               .WithColor(Color.DarkPurple)
+               .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
+               .WithTitle("Invite Created")
+               .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+               .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = Never\nChannel = {guildInvite.ChannelId}\n```")
+               .WithCurrentTimestamp()
+               .WithFooter(footer => {
+                   footer
+                   .WithIconUrl(bot.GetAvatarUrl())
+                   .WithText($"{bot}");
+               });
+
+                Embed embed = embedBuilder.Build();
+                await trackingChannel.SendMessageAsync(embed: embed);
+            }
+        }
+
+        /*public static class MessageTimer{
             private static System.Timers.Timer messageTimer;
             private static SocketCommandContext _Context;
 
@@ -627,7 +669,7 @@ namespace KatzTheCreator.Config{
                     MessageTimer.StartTimer(Context);
                 }
             }
-        }
+        }*/
 
         public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
             // parses Emote so bot can use
