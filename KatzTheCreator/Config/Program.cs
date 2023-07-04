@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
 namespace KatzTheCreator.Config{
@@ -13,7 +14,6 @@ namespace KatzTheCreator.Config{
         private CommandService _commands;
         private IServiceProvider _services;
         private InteractionService _interaction;
-        private SocketMessageComponent _buttons;
         public async Task RunBotAsync(){
 
             var config = new DiscordSocketConfig {
@@ -47,7 +47,7 @@ namespace KatzTheCreator.Config{
             await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
 
-            await _client.SetGameAsync("with your heart");
+            await _client.SetGameAsync("Bubba Face Camp ;(", type: ActivityType.Watching);
 
             _client.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
             _interaction.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
