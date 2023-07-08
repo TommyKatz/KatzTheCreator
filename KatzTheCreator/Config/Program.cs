@@ -47,14 +47,15 @@ namespace KatzTheCreator.Config{
             await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
 
-            await _client.SetGameAsync("Bubba Face Camp ;(", type: ActivityType.Watching);
+            await _client.SetGameAsync("for your /report", type: ActivityType.Watching);
 
             _client.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
             _interaction.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
 
             _client.Ready += async () =>{
                 Console.WriteLine($"Connected as -> [{_client.CurrentUser}]");
-                await _interaction.RegisterCommandsGloballyAsync(deleteMissing: true);
+
+                await _interaction.RegisterCommandsGloballyAsync();
                 Console.WriteLine("Commands have been registred");
 
             };

@@ -1,14 +1,11 @@
 using Discord;
 using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
 using System.Reflection;
-using System.Threading;
-using System.Runtime.InteropServices.ObjectiveC;
-using System.Timers;
-using System.Threading.Channels;
+using System.Reactive.Linq;
 
-namespace KatzTheCreator.Config{
+namespace KatzTheCreator.Config
+{
     public class UpdateHandler{
         
         private readonly DiscordSocketClient _client;
@@ -298,12 +295,105 @@ namespace KatzTheCreator.Config{
                     }
                     
                     break;
+
+                case "Claim":
+                    Emoji checkEmoji = new Emoji("✔️");
+                    Emoji trashEmoji = new Emoji("🗑️");
+                    Emoji falseEmoji = new Emoji("✖️");
+                    var userToClaim = component.User as SocketGuildUser;
+                    if (userToClaim.Roles.All(r => r.Equals(Discord.Color.Default))) return;
+                    
+                    var filterOutDefault = userToClaim.Roles.Where(r => r.Color != Discord.Color.Default);
+                    var userHighestRoleColor = filterOutDefault.MaxBy(r => r.Position).Color;
+
+                    await component.UpdateAsync(o => {
+                        o.Embed = component.Message.Embeds.First().ToEmbedBuilder()
+                        .WithColor(userHighestRoleColor)
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithText($"Claimed by {component.User.Username}:")
+                            .WithIconUrl(component.User.GetAvatarUrl());
+                        })
+                        .Build();
+                        o.Components = new ComponentBuilder()
+                            .WithButton("Completed", "Completed", ButtonStyle.Success, checkEmoji)
+                            .WithButton("Trash", "Trash", ButtonStyle.Secondary, trashEmoji)
+                            .WithButton("False Report", "False Report", ButtonStyle.Danger, falseEmoji).Build();
+                    });
+
+
+
+                    break;
+
+                case "Completed":
+
+                    var loggingChannel = rUser.Guild.GetTextChannel(1126979920376119346);
+                    var embedCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                    .WithColor(Color.Green)
+                    .WithThumbnailUrl("https://i.imgur.com/YpmReEl.png")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithText($"Completed by {component.User.Username}:")
+                        .WithIconUrl(component.User.GetAvatarUrl());
+                    })
+                    .Build();
+
+                    await component.DeferAsync();
+                    await component.DeleteOriginalResponseAsync();
+
+                    await loggingChannel.SendMessageAsync(embed: embedCopy);
+
+                    break;
+
+                case "Trash":
+
+                    var loggingTwoChannel = rUser.Guild.GetTextChannel(1126979920376119346);
+                    var embedTwoCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                    .WithColor(Color.LighterGrey)
+                    .WithThumbnailUrl("https://i.imgur.com/MyOqEvL.png")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithText($"Trashed by {component.User.Username}:")
+                        .WithIconUrl(component.User.GetAvatarUrl());
+                    })
+                    .Build();
+
+                    await component.DeferAsync();
+                    await component.DeleteOriginalResponseAsync();
+
+                    await loggingTwoChannel.SendMessageAsync(embed: embedTwoCopy);
+
+                    break;
+
+                case "False Report":
+
+                    var loggingThreeChannel = rUser.Guild.GetTextChannel(1126979920376119346);
+                    var embedThreeCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                    .WithColor(Color.DarkRed)
+                    .WithThumbnailUrl("https://i.imgur.com/8nj70eE.png")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithText($"Falsified by {component.User.Username}:")
+                        .WithIconUrl(component.User.GetAvatarUrl());
+                    })
+                    .Build();
+
+                    await component.DeferAsync();
+                    await component.DeleteOriginalResponseAsync();
+
+                    await loggingThreeChannel.SendMessageAsync(embed: embedThreeCopy);
+
+                    break;
             }
         }
 
         public async Task MessageOpsAsync(SocketMessage msg){
             if (string.IsNullOrEmpty(msg.Content) && msg.Attachments.Count == 0) return;
-            if (msg.Author.IsBot || msg.Channel.GetChannelType() == ChannelType.DM) return;
+            if (msg.Author.IsBot) return;
             if (msg.Channel.Id == 1046883404123222096) await msg.DeleteAsync();
 
             if (msg.Channel.Id == 1051719930384490536 && msg.Attachments.Count >= 1){
@@ -319,7 +409,7 @@ namespace KatzTheCreator.Config{
             Random rnd = new Random();
             int number = rnd.Next(1, 101);
 
-            if (number <= 4){ // 4% chance
+            if (number <= 4 && msg.Channel.GetChannelType() != ChannelType.DM){ // 4% chance
 
                 try{
                     Emote hmmEmote = Emote.Parse("<:hmm:1025075030540959775>");
