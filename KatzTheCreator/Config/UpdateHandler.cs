@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
 using System.Reactive.Linq;
+using Discord.Rest;
 
 namespace KatzTheCreator.Config
 {
@@ -22,8 +23,7 @@ namespace KatzTheCreator.Config
             _client.ButtonExecuted += RegisterButtonHandler;
             _client.UserBanned += UserBannedLog;
             _client.UserUnbanned += UserUnbannedLog;
-            _client.UserJoined += AnnounceJoinedUser;
-            _client.UserJoined += JoinLogging;
+            _client.UserJoined += JoinedUserOps;
             _client.UserLeft += LeaveLogging;
             _client.GuildMemberUpdated += UserUpdatedOps;
             _client.UserVoiceStateUpdated += UserVoiceStateChanged;
@@ -450,6 +450,53 @@ namespace KatzTheCreator.Config
                 channelId.Add(1020452407324459069); // guide
                 IEnumerable<ulong> allowedIds = channelId;
 
+                List<ulong> modChannelId = new List<ulong>();
+                modChannelId.Add(965699174358216744); // mod
+                modChannelId.Add(965723854955773952); // deleted
+                modChannelId.Add(1122241848254148620); // invite
+                modChannelId.Add(965699096352526366); // voice
+                IEnumerable<ulong> moderatedIds = channelId;
+
+                if (msg.HasValue && msg.Value.Embeds.Count > 0 && modChannelId.Contains(channel.Id)){
+
+                    var deletedMessage = msg.Value;
+                    var onlyEmbed = deletedMessage.Embeds.FirstOrDefault();
+                    var appInfo = await _client.GetApplicationInfoAsync();
+                    var owner = appInfo.Owner;
+                    var emergChannel = _client.GetChannel(988184539455172688) as SocketTextChannel;
+
+                    if (deletedMessage is IUserMessage userMessage && userMessage.Channel is IGuildChannel guildChannel){
+
+                        var guild = guildChannel.Guild;
+                        var auditLogs = await guild.GetAuditLogsAsync();
+
+                        var messageDeleteLogUser = (await guild.GetAuditLogsAsync(actionType: ActionType.MessageDeleted)).FirstOrDefault().User;
+
+                        if (onlyEmbed != null && messageDeleteLogUser != null){
+
+                            string embedDetails = $"Author: {onlyEmbed.Author?.Name}\n";
+
+                            foreach (var field in onlyEmbed.Fields){
+                                embedDetails += $"{field.Name}: {field.Value}\n";  
+
+                            }
+
+                            try{
+                                await owner.SendMessageAsync($"{messageDeleteLogUser.Mention} (ID: {messageDeleteLogUser.Id}) deleted the following embed in <#{channel.Id}> and it now flagged as a **high risk** moderator:\n\n{embedDetails}");
+                            } catch {
+                                await emergChannel.SendMessageAsync($"{messageDeleteLogUser.Mention} (ID: {messageDeleteLogUser.Id}) deleted the following embed in <#{channel.Id}> and it now flagged as a **high risk** moderator:\n\n{embedDetails}");
+                            }
+                            
+
+                        }
+
+
+                    }
+
+
+                    
+                }
+
                 if (!msg.HasValue || !allowedIds.Contains(channel.Id)) return;
 
                 var embedBuilder = new EmbedBuilder()
@@ -472,8 +519,8 @@ namespace KatzTheCreator.Config
             }
             catch (Exception){
                 //ignore
-            } 
-            
+            }
+
         }
 
         public async Task MessageEditedLog(Cacheable<IMessage, ulong> msgBefore, SocketMessage msgAfter, ISocketMessageChannel channel){
@@ -761,7 +808,7 @@ namespace KatzTheCreator.Config
             }
         }*/
 
-        public async Task AnnounceJoinedUser(SocketGuildUser userThatJoined){
+        public async Task JoinedUserOps(SocketGuildUser userThatJoined){
             // parses Emote so bot can use
             Emote welcomeEmote = Emote.Parse("<:bouncerkitty:1020394446988247110>");
             // gets server and channels to send message in
@@ -789,20 +836,119 @@ namespace KatzTheCreator.Config
                 .WithCurrentTimestamp();
 
 
-            Embed embed = embedBuilder.Build();
-            await welcomeChannel.SendMessageAsync(embed: embed);
-        }
-
-        public async Task JoinLogging(SocketGuildUser userJoined){
+            //announce user that joined and information in join-leave-logs
             var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
             IEmote joinEmote = Emote.Parse("<a:join:993953953832251542>");
-            await loggingChannel.SendMessageAsync($"{joinEmote} {userJoined.Mention} has appeared.");
+            var bot = _client.CurrentUser;
+
+            DateTime currentDate = DateTime.UtcNow;
+
+            // Calculate years, months, and days since account creation
+            TimeSpan accountAge = currentDate - userThatJoined.CreatedAt.UtcDateTime;
+            int accountYears = (int)(accountAge.TotalDays / 365);
+            int accountMonths = (int)((accountAge.TotalDays % 365) / 30);
+            int accountDays = (int)(accountAge.TotalDays % 30);
+            int accountHours = (int)accountAge.TotalHours;
+
+            if (accountYears > 0){
+
+                var embedbuilderTwo = new EmbedBuilder()
+                .WithColor(Color.DarkGreen)
+                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountYears} years, {accountMonths} months, {accountDays} days)*")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+                Embed embedTwo = embedbuilderTwo.Build();
+                await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+            }else if (accountMonths > 0){
+
+                var embedbuilderTwo = new EmbedBuilder()
+                .WithColor(Color.DarkGreen)
+                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountMonths} months, {accountDays} days)*")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+                Embed embedTwo = embedbuilderTwo.Build();
+                await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+            }else if (accountDays > 0){
+
+                var embedbuilderTwo = new EmbedBuilder()
+                .WithColor(Color.DarkGreen)
+                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountDays} days)*")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+                Embed embedTwo = embedbuilderTwo.Build();
+                await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+            }else if (accountHours > 0){
+                var embedbuilderTwo = new EmbedBuilder()
+                .WithColor(Color.DarkGreen)
+                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountHours} hours)*")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+                Embed embedTwo = embedbuilderTwo.Build();
+                await loggingChannel.SendMessageAsync(embed: embedTwo);
+            }else{
+                var embedbuilderTwo = new EmbedBuilder()
+                .WithColor(Color.DarkGreen)
+                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *(less than an hour)*")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+                Embed embedTwo = embedbuilderTwo.Build();
+                await loggingChannel.SendMessageAsync(embed: embedTwo);
+            }
+
+            Embed embed = embedBuilder.Build();
+
+            await welcomeChannel.SendMessageAsync(embed: embed);
         }
 
         public async Task LeaveLogging(SocketGuild thisGuild, SocketUser userLeave){
             var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
             IEmote leaveEmote = Emote.Parse("<a:leave:993953885339267173>");
-            await loggingChannel.SendMessageAsync($"{leaveEmote} **{userLeave.Username}** has vanished.");
+            var bot = _client.CurrentUser;
+
+            var embedbuilder = new EmbedBuilder()
+                .WithColor(Color.DarkRed)
+                .WithDescription($"{leaveEmote}** {userLeave.Username} has vanished**.")
+                .WithCurrentTimestamp()
+                .WithFooter(footer => {
+                    footer
+                    .WithIconUrl(bot.GetAvatarUrl())
+                    .WithText($"{bot}");
+                });
+
+            await loggingChannel.SendMessageAsync(embed: embed);
         }
     }
 }

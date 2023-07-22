@@ -11,7 +11,7 @@ namespace KatzTheCreator.UserModules{
             var reportsChannel = Context.Guild.GetChannel(1126172186156212374) as SocketTextChannel;
             var userReporting = Context.User;
 
-            await RespondAsync("Thank you for the report, a staff member will be with you shortly. Ensure DMs are enabled for this server.");
+            await RespondAsync("Thank you for the report, a staff member will be with you shortly. Ensure DMs are enabled for this server.", ephemeral: true);
 
             var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
