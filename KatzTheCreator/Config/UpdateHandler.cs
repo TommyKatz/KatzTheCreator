@@ -949,6 +949,9 @@ namespace KatzTheCreator.Config
                     .WithText($"{bot}");
                 });
 
+            Embed embed = embedbuilder.Build();
+            //
+
             await loggingChannel.SendMessageAsync(embed: embed);
         }
     }
