@@ -3,21 +3,23 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
 using System.Reactive.Linq;
-using Discord.Rest;
+//using System.Data.SQLite;
 
-namespace KatzTheCreator.Config
-{
+namespace KatzTheCreator.Config{
     public class UpdateHandler{
         
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
+        //private readonly SQLiteConnection _dbConnection;
 
-        public UpdateHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services){
+        public UpdateHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services){ // SQLiteConnection dbConnection
+
 
             _commands = commands;
             _client = client;
             _services = services;
+            //_dbConnection = dbConnection;
 
             _client.MessageReceived += MessageOpsAsync;
             _client.ButtonExecuted += RegisterButtonHandler;
@@ -32,6 +34,8 @@ namespace KatzTheCreator.Config
             _client.MessagesBulkDeleted += MessageBulkDeleteLog;
             _client.InviteCreated += InviteTracker;
         }
+
+        private Dictionary<string, ulong> claimedTickets = new Dictionary<string, ulong>();
 
         public async Task RegisterCommandAsync(){
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
@@ -184,6 +188,7 @@ namespace KatzTheCreator.Config
         }
 
         public async Task RegisterButtonHandler(SocketMessageComponent component){
+
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
@@ -194,11 +199,15 @@ namespace KatzTheCreator.Config
             var getUsecRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540158112268308);
             var getBearRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540205856038962);
 
+            var ticketId = component.Message.Id.ToString(); // Use the message ID as the ticket identifier
+            claimedTickets[ticketId] = component.User.Id;
+
             switch (component.Data.CustomId){
 
                 case "Skill Check Gang":
 
                     if (!rUser.Roles.Contains(getSCGRole)){
+
                         await rUser.AddRoleAsync(scgRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
@@ -206,7 +215,8 @@ namespace KatzTheCreator.Config
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
 
-                    } else {
+                    }else{
+
                         await rUser.RemoveRoleAsync(scgRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
@@ -219,13 +229,16 @@ namespace KatzTheCreator.Config
                 case "Serial Killer Squad":
 
                     if (!rUser.Roles.Contains(getKillerRole)){
+
                         await rUser.AddRoleAsync(killerRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
                             .WithDescription($"{component.User.Mention}, i assigned you the {getKillerRole.Mention} role.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
-                    } else {
+
+                    }else{
+
                         await rUser.RemoveRoleAsync(killerRoleID);
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
@@ -238,14 +251,18 @@ namespace KatzTheCreator.Config
                 case "USEC":
 
                     if (!rUser.Roles.Contains(getBearRole)){
+
                         if (!rUser.Roles.Contains(getUsecRole)){
+
                             await rUser.AddRoleAsync(usecRoleID);
                             var embedBuilder = new EmbedBuilder()
                                 .WithColor(Color.DarkPurple)
                                 .WithDescription($"{component.User.Mention}, i assigned you the {getUsecRole.Mention} role.");
                             Embed embed = embedBuilder.Build();
                             await component.RespondAsync(embed: embed, ephemeral: true);
+
                         }else{
+
                             await rUser.RemoveRoleAsync(usecRoleID);
                             var embedBuilder = new EmbedBuilder()
                                 .WithColor(Color.DarkPurple)
@@ -254,13 +271,14 @@ namespace KatzTheCreator.Config
                             await component.RespondAsync(embed: embed, ephemeral: true);
                         }
 
-                    } else{
+                    }else{
 
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
                             .WithDescription($"{component.User.Mention}, you may only have one of the roles at a time.");
                         Embed embed = embedBuilder.Build();
                         await component.RespondAsync(embed: embed, ephemeral: true);
+
                     }
                     break;
 
@@ -269,22 +287,26 @@ namespace KatzTheCreator.Config
                     if (!rUser.Roles.Contains(getUsecRole)){
 
                         if (!rUser.Roles.Contains(getBearRole)){
+
                             await rUser.AddRoleAsync(bearRoleID);
                             var embedBuilder = new EmbedBuilder()
                                 .WithColor(Color.DarkPurple)
                                 .WithDescription($"{component.User.Mention}, i assigned you the {getBearRole.Mention} role.");
                             Embed embed = embedBuilder.Build();
                             await component.RespondAsync(embed: embed, ephemeral: true);
+
                         }else{
+
                             await rUser.RemoveRoleAsync(bearRoleID);
                             var embedBuilder = new EmbedBuilder()
                                 .WithColor(Color.DarkPurple)
                                 .WithDescription($"{component.User.Mention}, i removed your {getBearRole.Mention} role.");
                             Embed embed = embedBuilder.Build();
                             await component.RespondAsync(embed: embed, ephemeral: true);
+
                         }
 
-                    } else {
+                    }else{
 
                         var embedBuilder = new EmbedBuilder()
                             .WithColor(Color.DarkPurple)
@@ -293,7 +315,7 @@ namespace KatzTheCreator.Config
                         await component.RespondAsync(embed: embed, ephemeral: true);
 
                     }
-                    
+
                     break;
 
                 case "Claim":
@@ -302,15 +324,17 @@ namespace KatzTheCreator.Config
                     Emoji falseEmoji = new Emoji("✖️");
                     var userToClaim = component.User as SocketGuildUser;
                     if (userToClaim.Roles.All(r => r.Equals(Discord.Color.Default))) return;
-                    
+
                     var filterOutDefault = userToClaim.Roles.Where(r => r.Color != Discord.Color.Default);
                     var userHighestRoleColor = filterOutDefault.MaxBy(r => r.Position).Color;
 
-                    await component.UpdateAsync(o => {
+                    await component.UpdateAsync(o =>{
+
                         o.Embed = component.Message.Embeds.First().ToEmbedBuilder()
                         .WithColor(userHighestRoleColor)
                         .WithCurrentTimestamp()
-                        .WithFooter(footer => {
+                        .WithFooter(footer =>{
+
                             footer
                             .WithText($"Claimed by {component.User.Username}:")
                             .WithIconUrl(component.User.GetAvatarUrl());
@@ -320,78 +344,116 @@ namespace KatzTheCreator.Config
                             .WithButton("Completed", "Completed", ButtonStyle.Success, checkEmoji)
                             .WithButton("Trash", "Trash", ButtonStyle.Secondary, trashEmoji)
                             .WithButton("False Report", "False Report", ButtonStyle.Danger, falseEmoji).Build();
+
                     });
 
 
 
                     break;
 
-                case "Completed":
+                case "Completed":{
+                        var ticketIdCompleted = component.Message.Id.ToString();
+                        if (!claimedTickets.TryGetValue(ticketIdCompleted, out var claimedUserId) || claimedUserId != component.User.Id){
+                            // The user who clicked this button did not claim the ticket
+                            await component.DeferAsync();
+                            await component.FollowupAsync($"You did not claim this ticket, so you cannot interact with these buttons.", ephemeral: true);
+                            return;
+                        }
 
-                    var loggingChannel = rUser.Guild.GetTextChannel(1126979920376119346);
-                    var embedCopy = component.Message.Embeds.First().ToEmbedBuilder()
-                    .WithColor(Color.Green)
-                    .WithThumbnailUrl("https://i.imgur.com/YpmReEl.png")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithText($"Completed by {component.User.Username}:")
-                        .WithIconUrl(component.User.GetAvatarUrl());
-                    })
-                    .Build();
+                        var loggingChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var embedCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                            .WithColor(Color.Green)
+                            .WithThumbnailUrl("https://i.imgur.com/YpmReEl.png")
+                            .WithCurrentTimestamp()
+                            .WithFooter(footer =>{
+                                footer
+                                .WithText($"Completed by {component.User.Username}:")
+                                .WithIconUrl(component.User.GetAvatarUrl());
+                            })
+                            .Build();
 
-                    await component.DeferAsync();
-                    await component.DeleteOriginalResponseAsync();
+                        await component.DeferAsync();
+                        await component.DeleteOriginalResponseAsync();
 
-                    await loggingChannel.SendMessageAsync(embed: embedCopy);
+                        await loggingChannel.SendMessageAsync(embed: embedCopy);
 
-                    break;
+                        break;
+                    }
 
-                case "Trash":
+                case "Trash":{
+                        var ticketIdTrash = component.Message.Id.ToString();
+                        if (!claimedTickets.TryGetValue(ticketIdTrash, out var claimedUserId) || claimedUserId != component.User.Id){
+                            // The user who clicked this button did not claim the ticket
+                            await component.DeferAsync();
+                            await component.FollowupAsync($"You did not claim this ticket, so you cannot interact with these buttons.", ephemeral: true);
+                            return;
+                        }
 
-                    var loggingTwoChannel = rUser.Guild.GetTextChannel(1126979920376119346);
-                    var embedTwoCopy = component.Message.Embeds.First().ToEmbedBuilder()
-                    .WithColor(Color.LighterGrey)
-                    .WithThumbnailUrl("https://i.imgur.com/MyOqEvL.png")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithText($"Trashed by {component.User.Username}:")
-                        .WithIconUrl(component.User.GetAvatarUrl());
-                    })
-                    .Build();
+                        var loggingTwoChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var embedTwoCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                            .WithColor(Color.LighterGrey)
+                            .WithThumbnailUrl("https://i.imgur.com/MyOqEvL.png")
+                            .WithCurrentTimestamp()
+                            .WithFooter(footer =>{
+                                footer
+                                .WithText($"Trashed by {component.User.Username}:")
+                                .WithIconUrl(component.User.GetAvatarUrl());
+                            })
+                            .Build();
 
-                    await component.DeferAsync();
-                    await component.DeleteOriginalResponseAsync();
+                        await component.DeferAsync();
+                        await component.DeleteOriginalResponseAsync();
 
-                    await loggingTwoChannel.SendMessageAsync(embed: embedTwoCopy);
+                        await loggingTwoChannel.SendMessageAsync(embed: embedTwoCopy);
 
-                    break;
+                        break;
+                    }
 
-                case "False Report":
+                case "False Report":{
+                        var ticketIdFalseReport = component.Message.Id.ToString();
+                        if (!claimedTickets.TryGetValue(ticketIdFalseReport, out var claimedUserId) || claimedUserId != component.User.Id){
+                            // The user who clicked this button did not claim the ticket
+                            await component.DeferAsync();
+                            await component.FollowupAsync($"You did not claim this ticket, so you cannot interact with these buttons.", ephemeral: true);
+                            return;
+                        }
 
-                    var loggingThreeChannel = rUser.Guild.GetTextChannel(1126979920376119346);
-                    var embedThreeCopy = component.Message.Embeds.First().ToEmbedBuilder()
-                    .WithColor(Color.DarkRed)
-                    .WithThumbnailUrl("https://i.imgur.com/8nj70eE.png")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithText($"Falsified by {component.User.Username}:")
-                        .WithIconUrl(component.User.GetAvatarUrl());
-                    })
-                    .Build();
+                        var loggingThreeChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var embedThreeCopy = component.Message.Embeds.First().ToEmbedBuilder()
+                            .WithColor(Color.DarkRed)
+                            .WithThumbnailUrl("https://i.imgur.com/8nj70eE.png")
+                            .WithCurrentTimestamp()
+                            .WithFooter(footer =>{
+                                footer
+                                .WithText($"Falsified by {component.User.Username}:")
+                                .WithIconUrl(component.User.GetAvatarUrl());
+                            })
+                            .Build();
 
-                    await component.DeferAsync();
-                    await component.DeleteOriginalResponseAsync();
+                        await component.DeferAsync();
+                        await component.DeleteOriginalResponseAsync();
 
-                    await loggingThreeChannel.SendMessageAsync(embed: embedThreeCopy);
+                        await loggingThreeChannel.SendMessageAsync(embed: embedThreeCopy);
 
-                    break;
+                        break;
+                    }
+
             }
         }
+            /*public void StoreInfo(string username, ulong userId, ulong msgsTyped, ulong userLevel){
 
-        public async Task MessageOpsAsync(SocketMessage msg){
+                using (var cmd = new SQLiteCommand("INSERT INTO MessageUsers", _dbConnection)){
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    cmd.Parameters.AddWithValue("@UserId", userId.ToString());
+                    cmd.Parameters.AddWithValue("@UserMessagesTyped", msgsTyped.ToString());
+                    cmd.Parameters.AddWithValue("@UserLevel", userLevel.ToString());
+
+
+                    cmd.ExecuteNonQuery();
+                }
+            }*/
+
+            public async Task MessageOpsAsync(SocketMessage msg){
             if (string.IsNullOrEmpty(msg.Content) && msg.Attachments.Count == 0) return;
             if (msg.Author.IsBot) return;
             if (msg.Channel.Id == 1046883404123222096) await msg.DeleteAsync();
@@ -949,7 +1011,6 @@ namespace KatzTheCreator.Config
                 });
 
             Embed embed = embedbuilder.Build();
-            //
 
             await loggingChannel.SendMessageAsync(embed: embed);
         }

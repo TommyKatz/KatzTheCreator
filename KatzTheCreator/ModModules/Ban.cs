@@ -95,7 +95,7 @@ namespace KatzTheCreator.ModModules{
                         await Context.Message.DeleteAsync();
 
                         try{
-                            await Context.Guild.GetUser(userToBeBanned).SendMessageAsync($"You been banned from **{serverName}** for **{banReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *Please note: All bans from this server are permanent and cannot be appealed.\n Any ban reversals are at the discretion of the Server Directors.*");
+                            await Context.Guild.GetUser(userToBeBanned).SendMessageAsync($"You've been banned from **{serverName}** for **{banReason}**.\n~\n Issued by {rUserHighestRole}: {rUser.Mention}\n~\n *Please note: All bans from this server are permanent and cannot be appealed.\n Any ban reversals are at the discretion of the Server Directors.*");
                         }catch (Exception){
                             await rUser.SendMessageAsync($"***Uh oh! DM couldn't be sent but action was still was taken...***\n\nThis user's DMs are disabled; A message could not be sent to the banned user.");
                         }
