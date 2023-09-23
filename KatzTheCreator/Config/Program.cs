@@ -3,10 +3,10 @@ using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
+//using System.Data.SQLite;
 
-namespace KatzTheCreator.Config{
+namespace KatzTheCreator.Config
+{
     public class Program{
         static void Main(string[] args) => new Program().RunBotAsync().GetAwaiter().GetResult();
 
@@ -14,6 +14,7 @@ namespace KatzTheCreator.Config{
         private CommandService _commands;
         private IServiceProvider _services;
         private InteractionService _interaction;
+        //private SQLiteConnection _dbConnection;
         public async Task RunBotAsync(){
 
             var config = new DiscordSocketConfig {
@@ -43,6 +44,10 @@ namespace KatzTheCreator.Config{
 
             string token = File.ReadAllText("token.txt");
 
+            /*_dbConnection = new SQLiteConnection("Data Source=users.db;Version=3;");
+            _dbConnection.Open();
+            InitializeDatabase();*/
+
             await _services.GetRequiredService<CommandHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
@@ -58,6 +63,8 @@ namespace KatzTheCreator.Config{
                 await _interaction.RegisterCommandsGloballyAsync();
                 Console.WriteLine("Commands have been registred");
 
+                //await _services.GetRequiredService<UpdateHandler>().StoreUser("Username", "UserId");
+
             };
 
             await _client.LoginAsync(TokenType.Bot, token);
@@ -65,5 +72,15 @@ namespace KatzTheCreator.Config{
 
             await Task.Delay(-1);
         }
+
+        /*private void InitializeDatabase(){
+
+            using (var cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS ButtonUsers (Id INTEGER PRIMARY KEY, Username TEXT, UserId TEXT)", _dbConnection)){
+
+                cmd.ExecuteNonQuery();
+
+            }
+
+        }*/
     }
 }
