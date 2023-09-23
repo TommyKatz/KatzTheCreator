@@ -32,7 +32,7 @@ namespace KatzTheCreator.UserModules
                 builder.WithTitle($"{Context.Guild.Name}")
                     .WithColor(Color.DarkPurple)
                     .WithThumbnailUrl(Context.Guild.IconUrl)
-                    .AddField("Owner", $"<@507965773818494996> *(ID: 507965773818494996)*")
+                    .AddField("Owner", $"<@507965773818494996> *(ID: 507965773818494996)*") //
                     .AddField("Date Created", $"{Context.Guild.CreatedAt.UtcDateTime.ToString("D")}")
                     .AddField("Member Count", $"{Context.Guild.MemberCount}")
                     .AddField("Server Booster Count", $"{boostCount} boosts")
@@ -50,7 +50,7 @@ namespace KatzTheCreator.UserModules
                 builder.WithTitle($"{Context.Guild.Name}")
                     .WithColor(Color.DarkPurple)
                     .WithThumbnailUrl(Context.Guild.IconUrl)
-                    .AddField("Owner", $"<@507965773818494996> *(ID: 507965773818494996)*")
+                    .AddField("Owner", $"<@507965773818494996> *(ID: 507965773818494996)*") //
                     .AddField("Date Created", $"{Context.Guild.CreatedAt.UtcDateTime.ToString("D")}")
                     .AddField("Member Count", $"{Context.Guild.MemberCount}")
                     .AddField("Server Booster Count", $"{boostCount} boosts")
