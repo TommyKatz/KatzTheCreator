@@ -561,7 +561,9 @@ namespace KatzTheCreator.Config{
 
                 if (!msg.HasValue || !allowedIds.Contains(channel.Id)) return;
 
-                var embedBuilder = new EmbedBuilder()
+                if (msg.Value.Author.GetAvatarUrl() != null){
+
+                    var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
                     .WithAuthor($"{msg.Value.Author.Username}", msg.Value.Author.GetAvatarUrl())
                     .WithDescription($"Message deleted in <#{channel.Id}>")
@@ -575,9 +577,32 @@ namespace KatzTheCreator.Config{
                         .WithText($"{bot}");
                     });
 
-                var embed = embedBuilder.Build();
+                    var embed = embedBuilder.Build();
 
-                await loggingChannel.SendMessageAsync(embed: embed);
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                }
+                else{
+
+                    var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkMagenta)
+                    .WithAuthor($"{msg.Value.Author.Username}", msg.Value.Author.GetDefaultAvatarUrl())
+                    .WithDescription($"Message deleted in <#{channel.Id}>")
+                    .AddField("Content", $"{msg.Value.Content}")
+                    .AddField("Date", $"<t:{msg.Value.Timestamp.ToUnixTimeSeconds()}:F>")
+                    .AddField("ID", $"```ini\nUser = {msg.Value.Author.Id}\nMessage = {msg.Value.Id}\nChannel = {channel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                }
             }
             catch (Exception){
                 //ignore
@@ -600,7 +625,9 @@ namespace KatzTheCreator.Config{
                 if (!allowedIds.Contains(channel.Id)) return;
                 if (msgAfter.Embeds.Any()) return;
 
-                var embedBuilder = new EmbedBuilder()
+                if (msgAfter.Author.GetAvatarUrl() != null){
+
+                    var embedBuilder = new EmbedBuilder()
                     .WithColor(Color.DarkMagenta)
                     .WithAuthor($"{msgAfter.Author.Username}", msgAfter.Author.GetAvatarUrl())
                     .WithDescription($"Message edited in <#{channel.Id}>")
@@ -614,9 +641,33 @@ namespace KatzTheCreator.Config{
                         .WithText($"{bot}");
                     });
 
-                var embed = embedBuilder.Build();
+                    var embed = embedBuilder.Build();
 
-                await loggingChannel.SendMessageAsync(embed: embed);
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                }
+                else{
+
+                    var embedBuilder = new EmbedBuilder()
+                    .WithColor(Color.DarkMagenta)
+                    .WithAuthor($"{msgAfter.Author.Username}", msgAfter.Author.GetDefaultAvatarUrl())
+                    .WithDescription($"Message edited in <#{channel.Id}>")
+                    .AddField("Now", $"{msgAfter}")
+                    .AddField("Previous", $"{msgBefore.Value.Content}")
+                    .AddField("ID", $"```ini\nUser = {msgAfter.Author.Id}\nMessage = {msgAfter.Id}\nChannel = {channel.Id}\n```")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                }
+
             }catch (Exception){ 
                 // ignore
             }
@@ -663,88 +714,181 @@ namespace KatzTheCreator.Config{
             var createVcChannel = _client.GetChannel(1045071639295053854) as SocketVoiceChannel;
             var bot = _client.CurrentUser;
 
-            if (vStateBefore.VoiceChannel == null){ // joins vc
+            if (user.GetAvatarUrl() != null){
 
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
-                    .WithDescription($"**{user.Username}** joined voice channel: {vStateAfter.VoiceChannel}")
-                    .AddField("Channel", $"{vStateAfter.VoiceChannel.Mention}")
-                    .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateAfter.VoiceChannel.Id}\n```")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithIconUrl(bot.GetAvatarUrl())
-                        .WithText($"{bot}");
-                    });
-                    
-                var embed = embedBuilder.Build();
+                if (vStateBefore.VoiceChannel == null){ // joins vc
 
-                await loggingChannel.SendMessageAsync(embed: embed);
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                        .WithDescription($"**{user.Username}** joined voice channel: {vStateAfter.VoiceChannel}")
+                        .AddField("Channel", $"{vStateAfter.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateAfter.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
 
-                if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
-                    var rUser = user as SocketGuildUser;
-                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
-                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                    var embed = embedBuilder.Build();
 
-                    await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                    if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                        var rUser = user as SocketGuildUser;
+                        var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                        await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    }
+
+                }else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
+
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                        .WithDescription($"**{user.Username}** left voice channel: {vStateBefore.VoiceChannel}")
+                        .AddField("Channel", $"{vStateBefore.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateBefore.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
+                        var rUser = user as SocketGuildUser;
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    }
+
+                }else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
+
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetAvatarUrl())
+                        .WithDescription($"**{user.Username}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
+                        .AddField("Channels", $"Before: {vStateBefore.VoiceChannel.Mention}\nAfter: {vStateAfter.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nNew = {vStateAfter.VoiceChannel.Id}\nOld = {vStateBefore.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                    /*if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931)
+                    {
+                        var rUser = user as SocketGuildUser;
+                        var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                        await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    } else if (vStateAfter.VoiceChannel.CategoryId != 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                        var rUser = user as SocketGuildUser;
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    }*/
                 }
 
-            } else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
+            } else {
 
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
-                    .WithDescription($"**{user.Username}** left voice channel: {vStateBefore.VoiceChannel}")
-                    .AddField("Channel", $"{vStateBefore.VoiceChannel.Mention}")
-                    .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateBefore.VoiceChannel.Id}\n```")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithIconUrl(bot.GetAvatarUrl())
-                        .WithText($"{bot}");
-                    });
-                var embed = embedBuilder.Build();
+                if (vStateBefore.VoiceChannel == null){ // joins vc
 
-                await loggingChannel.SendMessageAsync(embed: embed);
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetDefaultAvatarUrl())
+                        .WithDescription($"**{user.Username}** joined voice channel: {vStateAfter.VoiceChannel}")
+                        .AddField("Channel", $"{vStateAfter.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateAfter.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
 
-                if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
-                    var rUser = user as SocketGuildUser;
-                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
-                    await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                    if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                        var rUser = user as SocketGuildUser;
+                        var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                        await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    }
+
                 }
-                
-            } else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
+                else if (vStateAfter.VoiceChannel == null){ // disconnects from vc
 
-                var embedBuilder = new EmbedBuilder()
-                    .WithColor(Color.DarkBlue)
-                    .WithAuthor($"{user.Username}", user.GetAvatarUrl())
-                    .WithDescription($"**{user.Username}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
-                    .AddField("Channels", $"Before: {vStateBefore.VoiceChannel.Mention}\nAfter: {vStateAfter.VoiceChannel.Mention}")
-                    .AddField("ID", $"```ini\nUser = {user.Id}\nNew = {vStateAfter.VoiceChannel.Id}\nOld = {vStateBefore.VoiceChannel.Id}\n```")
-                    .WithCurrentTimestamp()
-                    .WithFooter(footer => {
-                        footer
-                        .WithIconUrl(bot.GetAvatarUrl())
-                        .WithText($"{bot}");
-                    });
-                var embed = embedBuilder.Build();
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetDefaultAvatarUrl())
+                        .WithDescription($"**{user.Username}** left voice channel: {vStateBefore.VoiceChannel}")
+                        .AddField("Channel", $"{vStateBefore.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nChannel = {vStateBefore.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
+                    var embed = embedBuilder.Build();
 
-                await loggingChannel.SendMessageAsync(embed: embed);
+                    await loggingChannel.SendMessageAsync(embed: embed);
 
-                /*if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931)
-                {
-                    var rUser = user as SocketGuildUser;
-                    var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
-                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                    if (vStateBefore.VoiceChannel.CategoryId == 1045032443830353931){
+                        var rUser = user as SocketGuildUser;
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    }
 
-                    await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
-                } else if (vStateAfter.VoiceChannel.CategoryId != 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
-                    var rUser = user as SocketGuildUser;
-                    var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
-                    await cTChannel.RemovePermissionOverwriteAsync(rUser);
-                }*/
+                }
+                else if (vStateBefore.VoiceChannel != vStateAfter.VoiceChannel){ // moved vcs
+
+                    var embedBuilder = new EmbedBuilder()
+                        .WithColor(Color.DarkBlue)
+                        .WithAuthor($"{user.Username}", user.GetDefaultAvatarUrl())
+                        .WithDescription($"**{user.Username}** moved from: {vStateBefore.VoiceChannel} to {vStateAfter.VoiceChannel}")
+                        .AddField("Channels", $"Before: {vStateBefore.VoiceChannel.Mention}\nAfter: {vStateAfter.VoiceChannel.Mention}")
+                        .AddField("ID", $"```ini\nUser = {user.Id}\nNew = {vStateAfter.VoiceChannel.Id}\nOld = {vStateBefore.VoiceChannel.Id}\n```")
+                        .WithCurrentTimestamp()
+                        .WithFooter(footer => {
+                            footer
+                            .WithIconUrl(bot.GetAvatarUrl())
+                            .WithText($"{bot}");
+                        });
+                    var embed = embedBuilder.Build();
+
+                    await loggingChannel.SendMessageAsync(embed: embed);
+
+                    /*if (vStateAfter.VoiceChannel.CategoryId == 1045032443830353931)
+                    {
+                        var rUser = user as SocketGuildUser;
+                        var channelOverwrites = new OverwritePermissions(viewChannel: PermValue.Allow);
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+
+                        await cTChannel.AddPermissionOverwriteAsync(rUser, channelOverwrites);
+                    } else if (vStateAfter.VoiceChannel.CategoryId != 1045032443830353931 && vStateAfter.VoiceChannel != createVcChannel){
+                        var rUser = user as SocketGuildUser;
+                        var cTChannel = rUser.Guild.GetTextChannel(1046883404123222096);
+                        await cTChannel.RemovePermissionOverwriteAsync(rUser);
+                    }*/
+                }
+
             }
+
+            
 
             /*if (vStateAfter.VoiceChannel == createVcChannel){
                 var rUser = user as SocketGuildUser;
@@ -794,39 +938,80 @@ namespace KatzTheCreator.Config{
             var inviter = guildInvite.Inviter;
             var bot = _client.CurrentUser;
 
-            if (guildInvite.ExpiresAt != null){
-                var embedBuilder = new EmbedBuilder()
-               .WithColor(Color.DarkPurple)
-               .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
-               .WithTitle("Invite Created")
-               .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
-               .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = {guildInvite.ExpiresAt.Value.DateTime}\nChannel = {guildInvite.ChannelId}\n```")
-               .WithCurrentTimestamp()
-               .WithFooter(footer => {
-                   footer
-                   .WithIconUrl(bot.GetAvatarUrl())
-                   .WithText($"{bot}");
-               });
+            if (inviter.GetAvatarUrl() != null){
 
-                Embed embed = embedBuilder.Build();
-                await trackingChannel.SendMessageAsync(embed: embed);
-            }else{
-                var embedBuilder = new EmbedBuilder()
-               .WithColor(Color.DarkPurple)
-               .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
-               .WithTitle("Invite Created")
-               .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
-               .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = Never\nChannel = {guildInvite.ChannelId}\n```")
-               .WithCurrentTimestamp()
-               .WithFooter(footer => {
-                   footer
-                   .WithIconUrl(bot.GetAvatarUrl())
-                   .WithText($"{bot}");
-               });
+                if (guildInvite.ExpiresAt != null){
+                    var embedBuilder = new EmbedBuilder()
+                   .WithColor(Color.DarkPurple)
+                   .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
+                   .WithTitle("Invite Created")
+                   .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+                   .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = {guildInvite.ExpiresAt.Value.DateTime}\nChannel = {guildInvite.ChannelId}\n```")
+                   .WithCurrentTimestamp()
+                   .WithFooter(footer => {
+                       footer
+                       .WithIconUrl(bot.GetAvatarUrl())
+                       .WithText($"{bot}");
+                   });
 
-                Embed embed = embedBuilder.Build();
-                await trackingChannel.SendMessageAsync(embed: embed);
+                    Embed embed = embedBuilder.Build();
+                    await trackingChannel.SendMessageAsync(embed: embed);
+                }else{
+                    var embedBuilder = new EmbedBuilder()
+                   .WithColor(Color.DarkPurple)
+                   .WithAuthor($"{inviter.Username}", inviter.GetAvatarUrl())
+                   .WithTitle("Invite Created")
+                   .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+                   .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = Never\nChannel = {guildInvite.ChannelId}\n```")
+                   .WithCurrentTimestamp()
+                   .WithFooter(footer => {
+                       footer
+                       .WithIconUrl(bot.GetAvatarUrl())
+                       .WithText($"{bot}");
+                   });
+
+                    Embed embed = embedBuilder.Build();
+                    await trackingChannel.SendMessageAsync(embed: embed);
+                }
+
+            } else {
+
+                if (guildInvite.ExpiresAt != null){
+                    var embedBuilder = new EmbedBuilder()
+                   .WithColor(Color.DarkPurple)
+                   .WithAuthor($"{inviter.Username}", inviter.GetDefaultAvatarUrl())
+                   .WithTitle("Invite Created")
+                   .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+                   .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = {guildInvite.ExpiresAt.Value.DateTime}\nChannel = {guildInvite.ChannelId}\n```")
+                   .WithCurrentTimestamp()
+                   .WithFooter(footer => {
+                       footer
+                       .WithIconUrl(bot.GetAvatarUrl())
+                       .WithText($"{bot}");
+                   });
+
+                    Embed embed = embedBuilder.Build();
+                    await trackingChannel.SendMessageAsync(embed: embed);
+                }else{
+                    var embedBuilder = new EmbedBuilder()
+                   .WithColor(Color.DarkPurple)
+                   .WithAuthor($"{inviter.Username}", inviter.GetDefaultAvatarUrl())
+                   .WithTitle("Invite Created")
+                   .WithDescription($"**Inviter:** *<@{inviter.Id}> - {inviter.Id}*")
+                   .AddField("Information", $"**{guildInvite.Url}**\n```ini\nExpiration = Never\nChannel = {guildInvite.ChannelId}\n```")
+                   .WithCurrentTimestamp()
+                   .WithFooter(footer => {
+                       footer
+                       .WithIconUrl(bot.GetAvatarUrl())
+                       .WithText($"{bot}");
+                   });
+
+                    Embed embed = embedBuilder.Build();
+                    await trackingChannel.SendMessageAsync(embed: embed);
+                }
+
             }
+
         }
 
         /*public static class MessageTimer{
@@ -888,7 +1073,9 @@ namespace KatzTheCreator.Config{
 
             await userThatJoined.AddRoleAsync(memberRole);
 
-            var embedBuilder = new EmbedBuilder()
+            if (userThatJoined.GetAvatarUrl() != null){
+
+                var embedBuilder = new EmbedBuilder()
                 .WithColor(Color.DarkPurple)
                 .WithAuthor($"{userThatJoined.DisplayName}", userThatJoined.GetAvatarUrl())
                 .WithThumbnailUrl(serverIconUrl)
@@ -898,101 +1085,221 @@ namespace KatzTheCreator.Config{
                 .WithCurrentTimestamp();
 
 
-            //announce user that joined and information in join-leave-logs
-            var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
-            IEmote joinEmote = Emote.Parse("<a:join:993953953832251542>");
-            var bot = _client.CurrentUser;
+                //announce user that joined and information in join-leave-logs
+                var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
+                IEmote joinEmote = Emote.Parse("<a:join:993953953832251542>");
+                var bot = _client.CurrentUser;
 
-            DateTime currentDate = DateTime.UtcNow;
+                DateTime currentDate = DateTime.UtcNow;
 
-            // Calculate years, months, and days since account creation
-            TimeSpan accountAge = currentDate - userThatJoined.CreatedAt.UtcDateTime;
-            int accountYears = (int)(accountAge.TotalDays / 365);
-            int accountMonths = (int)((accountAge.TotalDays % 365) / 30);
-            int accountDays = (int)(accountAge.TotalDays % 30);
-            int accountHours = (int)accountAge.TotalHours;
+                // Calculate years, months, and days since account creation
+                TimeSpan accountAge = currentDate - userThatJoined.CreatedAt.UtcDateTime;
+                int accountYears = (int)(accountAge.TotalDays / 365);
+                int accountMonths = (int)((accountAge.TotalDays % 365) / 30);
+                int accountDays = (int)(accountAge.TotalDays % 30);
+                int accountHours = (int)accountAge.TotalHours;
 
-            if (accountYears > 0){
+                if (accountYears > 0)
+                {
 
-                var embedbuilderTwo = new EmbedBuilder()
-                .WithColor(Color.DarkGreen)
-                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
-                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
-                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountYears} years, {accountMonths} months, {accountDays} days)*")
-                .WithCurrentTimestamp()
-                .WithFooter(footer => {
-                    footer
-                    .WithIconUrl(bot.GetAvatarUrl())
-                    .WithText($"{bot}");
-                });
-                Embed embedTwo = embedbuilderTwo.Build();
-                await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountYears} years, {accountMonths} months, {accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
 
-            }else if (accountMonths > 0){
+                }
+                else if (accountMonths > 0)
+                {
 
-                var embedbuilderTwo = new EmbedBuilder()
-                .WithColor(Color.DarkGreen)
-                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
-                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
-                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountMonths} months, {accountDays} days)*")
-                .WithCurrentTimestamp()
-                .WithFooter(footer => {
-                    footer
-                    .WithIconUrl(bot.GetAvatarUrl())
-                    .WithText($"{bot}");
-                });
-                Embed embedTwo = embedbuilderTwo.Build();
-                await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountMonths} months, {accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
 
-            }else if (accountDays > 0){
+                }
+                else if (accountDays > 0)
+                {
 
-                var embedbuilderTwo = new EmbedBuilder()
-                .WithColor(Color.DarkGreen)
-                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
-                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
-                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountDays} days)*")
-                .WithCurrentTimestamp()
-                .WithFooter(footer => {
-                    footer
-                    .WithIconUrl(bot.GetAvatarUrl())
-                    .WithText($"{bot}");
-                });
-                Embed embedTwo = embedbuilderTwo.Build();
-                await loggingChannel.SendMessageAsync(embed: embedTwo);
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
 
-            }else if (accountHours > 0){
-                var embedbuilderTwo = new EmbedBuilder()
-                .WithColor(Color.DarkGreen)
-                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
-                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
-                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountHours} hours)*")
-                .WithCurrentTimestamp()
-                .WithFooter(footer => {
-                    footer
-                    .WithIconUrl(bot.GetAvatarUrl())
-                    .WithText($"{bot}");
-                });
-                Embed embedTwo = embedbuilderTwo.Build();
-                await loggingChannel.SendMessageAsync(embed: embedTwo);
-            }else{
-                var embedbuilderTwo = new EmbedBuilder()
-                .WithColor(Color.DarkGreen)
-                .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
-                .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
-                .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *(less than an hour)*")
-                .WithCurrentTimestamp()
-                .WithFooter(footer => {
-                    footer
-                    .WithIconUrl(bot.GetAvatarUrl())
-                    .WithText($"{bot}");
-                });
-                Embed embedTwo = embedbuilderTwo.Build();
-                await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }
+                else if (accountHours > 0)
+                {
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountHours} hours)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }
+                else
+                {
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *(less than an hour)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }
+
+                Embed embed = embedBuilder.Build();
+
+                await welcomeChannel.SendMessageAsync(embed: embed);
+
+            } else {
+
+                var embedBuilder = new EmbedBuilder()
+                .WithColor(Color.DarkPurple)
+                .WithAuthor($"{userThatJoined.DisplayName}", userThatJoined.GetDefaultAvatarUrl())
+                .WithThumbnailUrl(serverIconUrl)
+                .WithTitle($"Welcome to {serverName} !")
+                .WithDescription($"- get your roles in <#{rolesChannel.Id}>\n- please read the rules <#{rulesChannel.Id}>\n")
+                .WithFooter($"{partyEmoji} Membership Count: {memberCount} {partyEmoji}")
+                .WithCurrentTimestamp();
+
+
+                //announce user that joined and information in join-leave-logs
+                var loggingChannel = _client.GetChannel(965699250522558566) as SocketTextChannel;
+                IEmote joinEmote = Emote.Parse("<a:join:993953953832251542>");
+                var bot = _client.CurrentUser;
+
+                DateTime currentDate = DateTime.UtcNow;
+
+                // Calculate years, months, and days since account creation
+                TimeSpan accountAge = currentDate - userThatJoined.CreatedAt.UtcDateTime;
+                int accountYears = (int)(accountAge.TotalDays / 365);
+                int accountMonths = (int)((accountAge.TotalDays % 365) / 30);
+                int accountDays = (int)(accountAge.TotalDays % 30);
+                int accountHours = (int)accountAge.TotalHours;
+
+                if (accountYears > 0){
+
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetDefaultAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountYears} years, {accountMonths} months, {accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+                }else if (accountMonths > 0){
+
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetDefaultAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountMonths} months, {accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+                }else if (accountDays > 0){
+
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetDefaultAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountDays} days)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+
+                }else if (accountHours > 0){
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetDefaultAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *({accountHours} hours)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }else{
+                    var embedbuilderTwo = new EmbedBuilder()
+                    .WithColor(Color.DarkGreen)
+                    .WithAuthor($"{userThatJoined.Username} has appeared.", userThatJoined.GetDefaultAvatarUrl())
+                    .WithDescription($"{joinEmote} {userThatJoined.Mention} *(ID: {userThatJoined.Id})*")
+                    .AddField("Account Created On", $"{userThatJoined.CreatedAt.UtcDateTime.ToString("D")} *(less than an hour)*")
+                    .WithCurrentTimestamp()
+                    .WithFooter(footer => {
+                        footer
+                        .WithIconUrl(bot.GetAvatarUrl())
+                        .WithText($"{bot}");
+                    });
+                    Embed embedTwo = embedbuilderTwo.Build();
+                    await loggingChannel.SendMessageAsync(embed: embedTwo);
+                }
+
+                Embed embed = embedBuilder.Build();
+
+                await welcomeChannel.SendMessageAsync(embed: embed);
+
             }
 
-            Embed embed = embedBuilder.Build();
-
-            await welcomeChannel.SendMessageAsync(embed: embed);
         }
 
         public async Task LeaveLogging(SocketGuild thisGuild, SocketUser userLeave){
