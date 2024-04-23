@@ -1,10 +1,10 @@
-﻿using Discord;
+﻿/*using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using RequireUserPermissionAttribute = Discord.Commands.RequireUserPermissionAttribute;
 
-namespace KatzTheCreator.UserModules{/*
+namespace KatzTheCreator.UserModules{
     public class Poll : InteractionModuleBase<SocketInteractionContext>{
         [SlashCommand("poll", "start a poll for users to vote")]
         [RequireUserPermission(GuildPermission.CreateInstantInvite)]
@@ -41,5 +41,5 @@ namespace KatzTheCreator.UserModules{/*
                 
             }
         }
-    }*/
-}
+    }
+}*/

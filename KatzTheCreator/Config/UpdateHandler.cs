@@ -192,10 +192,14 @@ namespace KatzTheCreator.Config{
             var rUser = component.User as SocketGuildUser;
             ulong scgRoleID = 965700697679077406;
             ulong killerRoleID = 965702660542062653;
+            ulong scientistRoleID = 1232216233483436045;
+            ulong rogueRoleID = 1232216391143260210;
             ulong usecRoleID = 1117540158112268308;
             ulong bearRoleID = 1117540205856038962;
             var getSCGRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965700697679077406);
             var getKillerRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 965702660542062653);
+            var getScientistRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1232216233483436045);
+            var getRogueRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1232216391143260210);
             var getUsecRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540158112268308);
             var getBearRole = rUser.Guild.Roles.FirstOrDefault(x => x.Id == 1117540205856038962);
 
@@ -318,6 +322,76 @@ namespace KatzTheCreator.Config{
 
                     break;
 
+                case "Science Team":
+
+                    if (!rUser.Roles.Contains(getRogueRole)){
+
+                        if (!rUser.Roles.Contains(getScientistRole)){
+
+                            await rUser.AddRoleAsync(scientistRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i assigned you the {getScientistRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+
+                        }else{
+
+                            await rUser.RemoveRoleAsync(scientistRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i removed your {getScientistRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+                        }
+
+                    }else{
+
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, you may only have one of the roles at a time.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+
+                    }
+                    break;
+
+                case "Rogue Scientist":
+
+                    if (!rUser.Roles.Contains(getScientistRole)){
+
+                        if (!rUser.Roles.Contains(getRogueRole)){
+
+                            await rUser.AddRoleAsync(rogueRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i assigned you the {getRogueRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+
+                        }else{
+
+                            await rUser.RemoveRoleAsync(rogueRoleID);
+                            var embedBuilder = new EmbedBuilder()
+                                .WithColor(Color.DarkPurple)
+                                .WithDescription($"{component.User.Mention}, i removed your {getRogueRole.Mention} role.");
+                            Embed embed = embedBuilder.Build();
+                            await component.RespondAsync(embed: embed, ephemeral: true);
+
+                        }
+
+                    }else{
+
+                        var embedBuilder = new EmbedBuilder()
+                            .WithColor(Color.DarkPurple)
+                            .WithDescription($"{component.User.Mention}, you may only have one of the roles at a time.");
+                        Embed embed = embedBuilder.Build();
+                        await component.RespondAsync(embed: embed, ephemeral: true);
+
+                    }
+
+                    break;
+
                 case "Claim":
                     Emoji checkEmoji = new Emoji("✔️");
                     Emoji trashEmoji = new Emoji("🗑️");
@@ -360,7 +434,7 @@ namespace KatzTheCreator.Config{
                             return;
                         }
 
-                        var loggingChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var loggingChannel = rUser.Guild.GetTextChannel(1126979920376119346);
                         var embedCopy = component.Message.Embeds.First().ToEmbedBuilder()
                             .WithColor(Color.Green)
                             .WithThumbnailUrl("https://i.imgur.com/YpmReEl.png")
@@ -389,7 +463,7 @@ namespace KatzTheCreator.Config{
                             return;
                         }
 
-                        var loggingTwoChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var loggingTwoChannel = rUser.Guild.GetTextChannel(1126979920376119346);
                         var embedTwoCopy = component.Message.Embeds.First().ToEmbedBuilder()
                             .WithColor(Color.LighterGrey)
                             .WithThumbnailUrl("https://i.imgur.com/MyOqEvL.png")
@@ -418,7 +492,7 @@ namespace KatzTheCreator.Config{
                             return;
                         }
 
-                        var loggingThreeChannel = rUser.Guild.GetTextChannel(1129861581807824988);
+                        var loggingThreeChannel = rUser.Guild.GetTextChannel(1126979920376119346);
                         var embedThreeCopy = component.Message.Embeds.First().ToEmbedBuilder()
                             .WithColor(Color.DarkRed)
                             .WithThumbnailUrl("https://i.imgur.com/8nj70eE.png")
