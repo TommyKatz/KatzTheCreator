@@ -15,6 +15,7 @@ namespace KatzTheCreator.Config
         private IServiceProvider _services;
         private InteractionService _interaction;
         //private SQLiteConnection _dbConnection;
+        //
         public async Task RunBotAsync(){
 
             var config = new DiscordSocketConfig {
