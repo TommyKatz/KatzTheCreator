@@ -15,6 +15,7 @@ namespace KatzTheCreator.Config
         private IServiceProvider _services;
         private InteractionService _interaction;
         //private SQLiteConnection _dbConnection;
+        //
         public async Task RunBotAsync(){
 
             var config = new DiscordSocketConfig {
@@ -52,7 +53,7 @@ namespace KatzTheCreator.Config
             await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
 
-            await _client.SetGameAsync("the vents on cams", type: ActivityType.Watching);
+            await _client.SetGameAsync("purple vent", type: ActivityType.Watching);
 
             _client.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
             _interaction.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
