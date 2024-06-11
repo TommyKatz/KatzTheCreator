@@ -53,7 +53,7 @@ namespace KatzTheCreator.Config
             await _services.GetRequiredService<UpdateHandler>().RegisterCommandAsync();
             await _services.GetRequiredService<InteractionHandler>().InitalizeAsync();
 
-            await _client.SetGameAsync("katz flirt with me", type: ActivityType.Listening);
+            await _client.SetGameAsync("katz flirt with me", type: ActivityType.Watching);
 
             _client.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
             _interaction.Log += async (LogMessage msg) => { Console.WriteLine(msg.Message); };
