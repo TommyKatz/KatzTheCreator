@@ -26,8 +26,7 @@ namespace KatzTheCreator.UserModules{
                     .WithAuthor(user.Username)
                     .WithColor(Color.DarkPurple)
                     .WithTitle("Avatar")
-                    .WithImageUrl(user.GetAvatarUrl(ImageFormat.Auto, 320))
-                    .WithFooter($"Requested by {rUser.Username}");
+                    .WithImageUrl(user.GetAvatarUrl(ImageFormat.Auto, 320));
 
                 Embed embed = embedBuilder.Build();
                 await RespondAsync(embed: embed);
